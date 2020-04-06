@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3" style="text-align: center">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1 style="text-align: center">Kalibracja</h1>
+
+<form method="POST" action="calibrate_gear_submit">
+    {% csrf_token %}
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto">
+            <label for="gearSelect">Urządzenie</label>
+            <select class="form-control" id="gearSelect" name="gearSelect">
+                {% for g in gear_c %}
+                <option value="{{g.sprzet_id}}">{{g.nazwa}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto">
+            <label for="date_c">Nowa data</label>
+            <input name="date_c" type="date" class="form-control" id="date_c" placeholder="YYYY-MM-DD" required>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="display: block; margin: 0 auto">Dodaj</button>
+</form>
+{% endblock %}

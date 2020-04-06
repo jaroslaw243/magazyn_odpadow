@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row d-print-inline-block">
+    <div class="w-50 p-3 float-left">
+<div align="left" class="container">
+    <div align="left">
+        <p><b>Nazwa pracowni: </b>{{waste.nazwa_pracowni.nazwa}}</p>
+    </div>
+</div>
+    </div>
+    <div class="w-50 p-3 float-right">
+      <div align="left">
+    <div align="right">
+        <p><b>Nr ewidencyjny odpadu: </b>{{waste.nr_ewidencyjny}}</p>
+    </div>
+    <div align="right">
+        <p><b>Rodzaj opakowania: </b>{{waste.rodzaj_opakowania.nazwa}}</p>
+    </div>
+</div>
+ </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row d-print-inline-block">
+    <div class="w-50 p-3 float-left">
+      <div align="left" class="container">
+    <div align="left">
+        <p><b>Charaktersytyka odpadów: </b></p>
+        <p>Postać fizyczna: {{waste.postac_fiz.nazwa}}</p>
+        <p></p>
+        <p>Rodzaj izotopu:</p>
+        {% for i in isotopes %}
+        <p>· {{i.id_izotop.nazwa}}</p>
+        {% endfor %}
+        <p></p>
+        <p>Aktywność (stężenie promieniotwórcze): {{waste.aktywnosc}}</p>
+        <p></p>
+        <p>Ilość (objętość): {{waste.ilosc}}</p>
+        <p></p>
+        <p>Właściwości odpadów: {{waste.wlasciwosc_komentarz}}</p>
+        <p></p>
+        <p>Grupa odpadów: {{waste.grupa_odpadow.nazwa}}</p>
+    </div>
+</div>
+    </div>
+    <div class="w-50 p-3 float-right">
+      <div align="left">
+    <div align="right">
+        <p><b>Przekazanie na magazyn: </b></p>
+        <p>{{waste.data_przekazania_do}}</p>
+        <p style="font-size:10px">data przekazania odpadu </p>
+        <p></p>
+        <p>{{waste.osoba_przekazanie_do.nazwa}}</p>
+        <p style="font-size:10px">osoba przekazująca na magazyn </p>
+        <p></p>
+        <p>{{waste.osoba_przyjmujaca.nazwa}}</p>
+        <p style="font-size:10px">osoba przyjmująca na magazyn </p>
+    </div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div align="right" class="container">
+    <div align="right">
+        <p><b>Data usunięcia odpadu: </b>{{waste.data_usuniecia_10t}}</p>
+    </div>
+</div>
+<div align="right" class="container">
+    <div align="right">
+        {% if waste.data_wydania != None %}
+        <p><b>Wydanie odpadu z magazynu: </b></p>
+        <p>{{waste.data_wydania}}</p>
+        <p style="font-size:10px">data wydania odpadu z magazynu </p>
+        <p></p>
+        <p>{{waste.osoba_wydanie.nazwa}}</p>
+        <p style="font-size:10px">osoba wydająca </p>
+        <p></p>
+        <p>{{waste.osoba_odbior.nazwa}}</p>
+        <p style="font-size:10px">osoba przejmująca odpad </p>
+        {% else %}
+        <p><b>Wydanie odpadu z magazynu: </b></p>
+        <p>....................</p>
+        <p style="font-size:10px">data wydania odpadu z magazynu </p>
+        <p></p>
+        <p>....................</p>
+        <p style="font-size:10px">osoba wydająca </p>
+        <p></p>
+        <p>....................</p>
+        <p style="font-size:10px">osoba przejmująca odpad </p>
+        {% endif %}
+    </div>
+</div>
+<div class="container">
+    <label for="mes_table" style="font-weight: bold">Pomiary radiometryczne:</label>
+    <div class="table" id="mes_table">
+        <table class="table table-hover table-dark" id="dtBasicExample" width="100%">
+            <thead>
+            <tr>
+                <th scope="col">Moc dawki na powierzchni opakowania</th>
+                <th scope="col">Odległość</th>
+                <th scope="col">Skażenie zewnętrzne</th>
+                <th scope="col">Typ przyrządu</th>
+                <th scope="col">Ważna kalibracja</th>
+                <th scope="col">Data wykonania pomiaru</th>
+                <th scope="col">Osoba wykonująca pomiar</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for m in measurements %}
+            <tr>
+                <td>{{m.wartosc}} {{m.jednostka}}</td>
+                <td>{{m.odleglosc}} cm</td>
+                {% if waste.skazenie_zewnetrzne == 0 %}
+                <td>Nie</td>
+                {% else %}
+                <td>Tak</td>
+                {% endif %}
+                <td>{{m.sprzet_id_p.nazwa}}</td>
+                {% if m.waznosc_kal_sprz == 1 %}
+                <td>Tak</td>
+                {% else %}
+                <td>Nie</td>
+                {% endif %}
+                <td>{{m.data}}</td>
+                <td>{{m.wykonal.nazwa}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div align="left" class="container">
+    <div align="left">
+        <p><b>Dodatkowe informacje: </b></p>
+        {% if waste.odpad_zwrot == 0 %}
+        <p>- Odpad do zwrotu: Nie</p>
+        {% else %}
+        <p>- Odpad do zwrotu: Tak</p>
+        {% endif %}
+        {% if  location.id_polki.pokoj != 'UT' %}
+        <p>- Bieżąca lokalizacja: {{location.id_polki.budynek}}, p. {{location.id_polki.pokoj}}, {{location.id_polki.opis}}</p>
+        {% else %}
+        <p>- Bieżąca lokalizacja: {{location.id_polki.opis}}</p>
+        {% endif %}
+        {% if  waste.dodatkowe_informacje != None %}
+        <p>- {{waste.dodatkowe_informacje}}</p>
+        {% else %}
+        <p>- </p>
+        {% endif %}
+    </div>
+</div>
+<p></p>
+<p></p>
+<p style="padding-top: 30px"></p>
+<button id="printPageButton" class="btn btn-primary" onClick="window.print();">Drukuj</button>
+<p style="padding-bottom: 50px"></p>
+{% endblock %}

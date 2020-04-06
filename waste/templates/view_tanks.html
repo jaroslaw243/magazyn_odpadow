@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center">Przegląd pomiarów</h1>
+
+<ul class="nav justify-content-end">
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_tanks_month">Miesiąc</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_tanks_all">Wszystko</a>
+    </li>
+</ul>
+
+<div class="table">
+    <table class="table table-hover table-dark" width="100%" id="dtBasicExample">
+        <thead>
+        <tr>
+            <th scope="col">Numer zbiornika</th>
+            <th scope="col">Stan zbiornika</th>
+            <th scope="col">Data pomiaru</th>
+            <th scope="col">Wartość</th>
+            <th scope="col">Wykonał</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for t in tanks %}
+        <tr>
+            <td>{{t.nr_zbiornika.zbiornik_id}}</td>
+            <td>{{t.nr_zbiornika.stan}}</td>
+            <td>{{t.data_pomiaru}}</td>
+            <td>{{t.wartosc}} {{t.jednostka}}</td>
+            <td>{{t.wykonal.nazwa}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if tanks.has_previous %}
+            <a href="?page=1">&laquo; początek</a>
+            <a href="?page={{ tanks.previous_page_number }}">poprzednia</a>
+        {% endif %}
+
+        <span class="current">
+            Strona {{ tanks.number }} z {{ tanks.paginator.num_pages }}.
+        </span>
+
+        {% if tanks.has_next %}
+            <a href="?page={{ tanks.next_page_number }}">następna</a>
+            <a href="?page={{ tanks.paginator.num_pages }}">ostatnia &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

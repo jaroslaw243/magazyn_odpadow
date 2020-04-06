@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div style="text-align: center">
+<label for="by_date_form" style="font-size:35px; margin: 0 auto; display: block">Szukaj według daty:</label>
+</div>
+<form method="POST" action="search_by_date" id="by_date_form">
+    {% csrf_token %}
+    <div class="form-row" style="display: block; margin: 0 auto">
+    <div class="row">
+    <div class="col"></div>
+        <div class="col-md-4 mb-3" style="display: block; margin: 0 auto; max-width: 200px;">
+            <label for="date_f">Od</label>
+            <input name="date_f" type="date" class="form-control" id="date_f" required>
+        </div>
+        <div class="col-md-4 mb-3" style="display: block; margin: 0 auto; max-width: 200px;">
+            <label for="date_t">Do</label>
+            <input name="date_t" type="date" class="form-control" id="date_t" required>
+        </div>
+        <div class="col"></div>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="display: block; margin: 0 auto">Szukaj</button>
+</form>
+<div class="col-md-4 mb-3" >
+
+</div>
+<hr>
+<div style="text-align: center">
+<label for="by_name_form" style="font-size:30px">Szukaj według numeru ewidencyjnego:</label>
+</div>
+<form method="GET" action="search_by_name" id="by_name_form">
+    {% csrf_token %}
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-4 mb-3" style="display: block; margin: 0 auto; max-width: 380px;">
+            <label for="ref_num">Numer ewidencyjny</label>
+            <input name="ref_num" type="text" class="form-control" id="ref_num" maxlength="255" required>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="display: block; margin: 0 auto">Szukaj</button>
+</form>
+{% endblock %}

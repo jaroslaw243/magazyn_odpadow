@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+<h1 style="text-align: center">Zwrot odpadu do magazynu</h1>
+<form method="POST" action="return_waste_submit">
+    {% csrf_token %}
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:380px;">
+            <label for="ref_num">Numer ewidencyjny odpadu do zwrotu</label>
+            <input name="ref_num" type="text" class="form-control" id="ref_num" required>
+        </div>
+    </div>
+    <hr>
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:380px;">
+            <label for="shelf">Tag półki/kosza</label>
+            <input name="shelf" type="text" class="form-control" id="shelf" placeholder="R#P#" required>
+        </div>
+
+        <div class="row">
+        <div class="col"></div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:200px;">
+            <label for="building">Budynek</label>
+            <select name="building" class="form-control" id="building">
+                <option value="SB">Stary budynek</option>
+                <option value="NB">Nowy budynek</option>
+            </select>
+        </div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:200px;">
+            <label for="room">Pokój</label>
+            <select name="room" class="form-control" id="room">
+                {% for r in rooms %}
+                <option value="{{r.pokoj}}">{{r.pokoj}}</option>
+                {% endfor %}
+            </select>
+        </div>
+         <div class="col"></div>
+        </div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:380px;">
+            <label for="person_receiving">Osoba odbierająca</label>
+            <input name="person_receiving" type="text" class="form-control" id="person_receiving" placeholder="Nazwisko"
+                   required>
+        </div>
+        <div class="row">
+        <div class="col"></div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:200px;">
+            <label for="hand_on_date">Data przekazania</label>
+            <input name="hand_on_date" type="date" class="form-control" id="hand_on_date" placeholder="YYYY-MM-DD"
+                   required>
+        </div>
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto; max-width:200px;">
+            <label for="hand_on_time">Godzina przekazania</label>
+            <input name="hand_on_time" type="time" class="form-control" id="hand_on_time" placeholder="HH:mm" required>
+        </div>
+        <div class="col"></div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto">Zwróć odpad</button>
+</form>
+
+{% endblock %}

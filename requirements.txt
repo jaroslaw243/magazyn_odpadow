@@ -1,0 +1,12 @@
+Django==2.2.7
+PyMySQL
+reportlab
+Pillow
+mysqlclient==1.4.6
+python-dateutil
+django-javascript_settings
+gunicorn==20.0.4
+
+
+
+

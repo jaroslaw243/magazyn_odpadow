@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST" action="change_tank_fill_submit">
+    {% csrf_token %}
+    <h1 style="text-align: center">Zmiana zapełnienia zbiornika</h1>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 200px">
+            <fieldset class="form-group">
+                {% for t in tanks %}
+                <div class="form-check">
+                    <input class="form-check-input" id="{{t.zbiornik_id}}" name="tank_nr" type="radio"
+                           value="{{t.zbiornik_id}}" style="-ms-transform: scale(1.5);
+-webkit-transform: scale(1.5);
+transform: scale(1.5);">
+                    <label class="form-check-label" for="{{t.zbiornik_id}}">
+                        <b>{{t.zbiornik_id}}</b> (Stan: {{t.stan}}) Zapełnienie:
+                    </label>
+                    <div id='zapelnienie{{ forloop.counter }}'>{{t.zapelnienie}}</div>
+                        <div class="progress" style="font-size: 15px; font-weight: bold; background-color: #babcbf">
+    <div class="progress-bar" id="progressBar{{ forloop.counter }}" role="progressBar" style="width: 33%;" aria-valuemin="0" aria-valuemax="100"></div>
+  </div>
+                    <hr>
+                </div>
+                {% endfor %}
+            </fieldset>
+        </div>
+
+        <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 200px">
+            <label for="fill">Zapełnienie</label>
+            <input name="fill" type="number" class="form-control" id="fill"
+                   min="0" max="100" required>
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="display: block; margin:0 auto">Zmień zapełnienie</button>
+</form>
+
+<script> function procenciki(zapelnienieId, progressBarId){
+var percent = document.getElementById(zapelnienieId).innerHTML; //tym sterujesz paskiem i kolorami - tutaj przypiszesz sobie zmienną.
+document.getElementById(zapelnienieId).style.display = "none";
+console.log(percent);
+//var oMeter = $('.progress-bar');
+var divProgressBar = document.getElementById(progressBarId);
+//var percent = 100 * oMeter.width() / $('.progress').width();
+
+divProgressBar.innerHTML = percent + "%";
+divProgressBar.style.width = percent + "%";
+if (percent < 75) {
+  //oMeter.css('background-color', 'green');
+  divProgressBar.style.backgroundColor = "green";
+} else if (percent >= 75 && percent <= 94) {
+  //oMeter.css('background-color', 'orange');
+  divProgressBar.style.backgroundColor = "orange";
+  } else if (percent >= 95 && percent <= 100) {
+  //oMeter.css('background-color', 'red');
+  divProgressBar.style.backgroundColor = "red";
+}
+}
+for (i=1; i<={{number_of_tanks}}; i++){
+procenciki('zapelnienie'+i,'progressBar'+i);
+}</script>
+{% endblock %}

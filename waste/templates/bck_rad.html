@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1 style="text-align: center">Pomiary tła</h1>
+
+<ul class="nav justify-content-end" >
+    <li class="nav-item">
+        <a class="nav-link active" href="\waste\bck_rad_week">Tydzień</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="\waste\bck_rad_month">Miesiąc</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="\waste\bck_rad_quarter">Kwartał</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="\waste\bck_rad_year">Rok</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="\waste\bck_rad_all">Wszystko</a>
+    </li>
+</ul>
+
+<div class="table">
+    <table class="table table-hover table-dark" width="100%" style="text-align: left">
+        <thead>
+        <tr>
+            <th scope="col" style="text-align: left">Data pomiaru</th>
+            <th scope="col" style="text-align: left">Wartość</th>
+            <th scope="col" style="text-align: left">Budynek</th>
+            <th scope="col" style="text-align: left">Sprzęt</th>
+            <th scope="col" style="text-align: left">Ważna kalibracja</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for mb in mes_bg %}
+        <tr>
+            <td>{{mb.data_pomiaru}}</td>
+            <td>{{mb.wartosc}} {{mb.jednostka}}</td>
+            <td>{{mb.budynek}}</td>
+            <td>{{mb.sprzet_id.nazwa}}</td>
+            {% if mb.waznosc_kal_sprz == 1 %}
+            <td>Tak</td>
+            {% else %}
+            <td>Nie</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if mes_bg.has_previous %}
+            <a href="?page=1">&laquo; początek</a>
+            <a href="?page={{ mes_bg.previous_page_number }}">poprzednia</a>
+        {% endif %}
+
+        <span class="current">
+            Strona {{ mes_bg.number }} z {{ mes_bg.paginator.num_pages }}.
+        </span>
+
+        {% if mes_bg.has_next %}
+            <a href="?page={{ mes_bg.next_page_number }}">następna</a>
+            <a href="?page={{ mes_bg.paginator.num_pages }}">ostatnia &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
+

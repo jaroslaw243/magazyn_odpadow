@@ -1,0 +1,11 @@
+@media print {
+  #printPageButton {
+    display: none !important;
+  }
+}
+  #printPageButton {
+    margin: 0 auto;
+    display: block;
+    height: 60px;
+    width: 120px;
+  }

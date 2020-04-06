@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+<h1 style="text-align: center">Dodawanie komentarzy</h1>
+<form method="POST" action="comment_submit">
+    {% csrf_token %}
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto">
+            <label for="ref_num">Numer ewidencyjny komentowanego odpadu</label>
+            <input name="ref_num" type="text" class="form-control" id="ref_num" required>
+        </div>
+    </div>
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin: 0 auto">
+            <label for="additional_inf">Komentarz</label>
+            <textarea class="form-control" id="additional_inf" name="additional_inf" rows="4"></textarea>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto">Dodaj komentarz</button>
+</form>
+{% endblock %}

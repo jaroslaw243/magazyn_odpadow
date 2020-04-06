@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% if messages %}
+
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+<ul class="nav justify-content-end">
+  <li class="nav-item">
+    <a class="nav-link active" href="admin">Panel administracyjny</a>
+  </li>
+</ul>
+<div style="rows" style="display: block; margin: auto">
+
+    <img style="max-width: 400px; max-height: 400px;" src="{% static "logo_gliwice.png" %}" class="img-fluid" />
+    <img src="{% static "Logo.gif" %}" class="img-fluid"/>
+</div>
+<div style="margin:auto; display: flex; text-align: center">
+<form method="POST" action="log_in_submit" style="display: block; margin: 0 auto">
+    {% csrf_token %}
+    <div class="col-md-12 mb-3" style="text-align: center">
+        <div class="form-group" style="text-align: left">
+            <label for="InputUsername" style="text-align: left">Login</label>
+            <input type="text" class="form-control" id="InputUsername" placeholder="Login" name="username" style="text-align: left">
+        </div>
+        <div class="form-group" style="text-align: left">
+            <label for="InputPassword" style="text-align: left">Hasło</label>
+            <input type="password" class="form-control" id="InputPassword" placeholder="Hasło" name="password" style="text-align: left">
+        </div>
+        <button type="submit" class="btn btn-primary" style="text-align: center; margin: 0 auto; display: block">Zaloguj się</button>
+    </div>
+</form>
+</div>
+</body>
+{% endblock %}
