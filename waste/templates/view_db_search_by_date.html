@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="table">
+    <table class="table table-hover table-dark" width="100%" id="dtBasicExample">
+        <thead>
+        <tr>
+            <th scope="col">Numer ewidencyjny</th>
+            <th scope="col">Bieżąca lokalizacja</th>
+            <th scope="col">Data przekazania</th>
+            <th scope="col">Grupa odpadów</th>
+            <th scope="col">Postać fizyczna</th>
+            <th scope="col">Nazwa pracowni</th>
+            <th scope="col">Przekazany przez</th>
+            <th scope="col">Odebrany przez</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for l in location %}
+        <tr>
+            <td>{{l.id_odpadu.nr_ewidencyjny}}</td>
+            <td> {{l.id_polki.budynek}} | p. {{l.id_polki.pokoj}} | {{l.id_polki.opis}}</td>
+            <td>{{l.id_odpadu.data_przekazania_do}}</td>
+            <td>{{l.id_odpadu.grupa_odpadow.nazwa}}</td>
+            <td>{{l.id_odpadu.postac_fiz.nazwa}}</td>
+            <td>{{l.id_odpadu.nazwa_pracowni.nazwa}}</td>
+            <td>{{l.id_odpadu.osoba_przekazanie_do.nazwa}}</td>
+            <td>{{l.id_odpadu.osoba_przyjmujaca.nazwa}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

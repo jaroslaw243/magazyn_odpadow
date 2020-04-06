@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1 style="text-align: center">Odpady wyrzucone w danym miesiącu</h1>
+
+<form method="POST" action="view_monthly_report" name="monthly_report" id="monthly_report">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="col-md-1.5 mb-3">
+            <select class="form-control" id="report_month" name="report_month" style="width: 132px; display: inline-block;">
+                <option value='1'>Styczeń</option>
+                <option value='2'>Luty</option>
+                <option value='3'>Marzec</option>
+                <option value='4'>Kwiecień</option>
+                <option value='5'>Maj</option>
+                <option value='6'>Czerwiec</option>
+                <option value='7'>Lipiec</option>
+                <option value='8'>Sierpień</option>
+                <option value='9'>Wrzesień</option>
+                <option value='10'>Październik</option>
+                <option value='11'>Listopad</option>
+                <option value='12'>Grudzień</option>
+            </select>
+        </div>
+        <div class="col-md-1.5 mb-3">
+            <select class="form-control" id="report_year" name="report_year" style="width: 132px; display: inline-block;">
+                {% for y in years %}
+                <option value='{{y.year}}'>{{y.year}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1.5 mb-3">
+            <button style="display: block; margin: 0 auto" class="btn btn-primary" type="submit">Wyświetl</button>
+        </div>
+    </div>
+</form>
+
+<div class="table">
+    <table class="table table-hover table-dark" width="100%" id="dtBasicExample">
+        <thead>
+        <tr>
+            <th scope="col">Numer ewidencyjny</th>
+            <th scope="col">Data przekazania</th>
+            <th scope="col">Data wydania</th>
+            <th scope="col">Wydany przez</th>
+            <th scope="col">Odebrany przez</th>
+            <th scope="col">Zwrócono odpad</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for rw in removed_waste %}
+        <tr>
+            <td><a style="color:white" href="/waste/search_by_name?ref_num={{rw.nr_ewidencyjny}}">{{rw.nr_ewidencyjny}}</a></td>
+            <td>{{rw.data_przekazania_do}}</td>
+            <td>{{rw.data_wydania}}</td>
+            <td>{{rw.osoba_wydanie.nazwa}}</td>
+            <td>{{rw.osoba_odbior.nazwa}}</td>
+            {% if rw.odpad_zwrot == 1 %}
+            <td>Tak</td>
+            {% else %}
+            <td>Nie</td>
+            {% endif %}
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="POST" action="print_submit" id="print_form">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="col-md-4 mb-3">
+            <label for="ref_num">Numer ewidencyjny</label>
+            <input name="ref_num" type="text" class="form-control" id="ref_num" required>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit">Drukuj</button>
+</form>
+{% endblock %}

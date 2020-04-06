@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST" action="add_tank_submit">
+    {% csrf_token %}
+    <h1  style="text-align: center">Dodawanie zbiornika</h1>
+    <div class="form-row" style="display: block; margin:0 auto">
+        <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 380px;">
+            <label for="tank_nr">Numer zbiornika</label>
+            <input name="tank_nr" type="number" min="0" class="form-control" id="tank_nr" required>
+        </div>
+        <div class="row">
+        <div class="col"></div>
+
+        <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 200px;">
+            <label for="tank_date">Data utworzenia</label>
+            <input name="tank_date" type="date" class="form-control" id="tank_date" placeholder="YYYY-MM-DD" required>
+        </div>
+        <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 200px;">
+            <label for="tank_time">Godzina utworzenia</label>
+            <input name="tank_time" type="time" class="form-control" id="tank_time" placeholder="HH:mm" required>
+        </div>
+        <div class="col"></div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="display: block; margin:0 auto">Dodaj zbiornik</button>
+</form>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<form method="POST" action="add_mes_submit">
+    {% csrf_token %}
+    <h1  style="text-align: center">Pomiar aktywnych odpadów</h1>
+    <div class="form-group">
+        <div class="form-row" style="display: block; margin:0 auto">
+            <div class="col-md-3 mb-12" style="display: block; margin:0 auto; max-width: 380px;">
+                <label for="ref_num">Numer ewidencyjny odpadu</label>
+                <input name="ref_num" type="text" class="form-control" id="ref_num" required>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="row">
+        <div class="col"></div>
+             <div class="col-md-3" style="max-width: 200px;">
+                <label for="dose">Moc dawki [uSv/h]</label>
+                <input name="dose" type="number" step="0.01" min="0" max="100000000" class="form-control" id="dose"
+                       required>
+            </div>
+             <div class="col-md-3" style="max-width: 200px;">
+                <label for="mes_distance">Odległość [cm]</label>
+                <input name="mes_distance" type="number" step="0.1" min="0" max="10000" class="form-control"
+                       id="mes_distance" required>
+            </div>
+            <div class="col"></div>
+            </div>
+        </div>
+            <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 400px;">
+                <label for="gear_select">Numer seryjny przyrządu</label>
+                <select class="form-control" id="gear_select" name="gear_select">
+                    {% for g in gear %}
+                    <option value='{{g.sprzet_id}}'>{{g.nazwa}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="form-group" >
+    <div class="row">
+    <div class="col"></div>
+            <div class="col-md-3 mb-3" style="max-width: 200px;">
+                <label for="mes_date">Data wykonania pomiaru</label>
+                <input name="mes_date" type="date" class="form-control" id="mes_date" placeholder="YYYY-MM-DD" required>
+            </div>
+            <div class="col-md-3 mb-3" style="max-width: 200px;">
+                <label for="mes_time">Godzina wykonania pomiaru</label>
+                <input name="mes_time" type="time" class="form-control" id="mes_time" placeholder="HH:mm" required>
+            </div>
+            <div class="col"></div>
+            </div>
+            <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 400px">
+                <label for="person_making_mes">Osoba wykonująca pomiar</label>
+                <input name="person_making_mes" type="text" class="form-control" id="person_making_mes"
+                       placeholder="Nazwisko" required>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto">Dodaj pomiar</button>
+</form>
+{% endblock %}

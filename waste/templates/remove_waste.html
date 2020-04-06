@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+a:link, a:visited {
+  color: black;
+}
+</style>
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-primary alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="container-fluid" style="display: flex;
+  align-items: center;
+  justify-content: center">
+<form action="remove_submit" method="POST">
+    {% csrf_token %}
+    <h1 style="text-align: center">Wyrzucanie odpadów</h1>
+
+    <div class="form-row" style="display: block; margin: 0 auto">
+        <div class="form-group col-md-12">
+            <fieldset class="form-group">
+                {% for w in waste %}
+                <div class="form-check">
+                    <input class="form-check-input" id="{{w.odpad_id}}" name="wasteSelect" type="radio"
+                           value="{{w.odpad_id}}" style="-ms-transform: scale(1.5);
+-webkit-transform: scale(1.5);
+transform: scale(1.5);">
+                    <label class="form-check-label" for="{{w.odpad_id}}">
+                        <b><a href="/waste/search_by_name?ref_num={{w.nr_ewidencyjny}}">{{w.nr_ewidencyjny}}</a></b> (Data przekazania: {{w.data_przekazania_do}})
+                    </label>
+                </div>
+                {% endfor %}
+            </fieldset>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-3">
+            <label for="person_g">Osoba wydająca</label>
+            <input class="form-control" id="person_g" name="person_g" placeholder="Nazwisko" type="text">
+        </div>
+        <div class="form-group col-md-3">
+            <label for="person_r">Osoba odbierająca</label>
+            <input class="form-control" id="person_r" name="person_r" placeholder="Nazwisko" type="text">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="remove_date">Data wydania</label>
+            <input class="form-control" id="remove_date" name="remove_date" placeholder="YYYY-MM-DD" required
+                   type="date">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="remove_time">Godzina wydania</label>
+            <input class="form-control" id="remove_time" name="remove_time" placeholder="HH:mm" type="time" required>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4 style="text-align: center">Pomiar przy wydaniu odpadu</h4>
+    <div class="form-row">
+        <div class="col-md-6 mb-6">
+            <label for="dose">Moc dawki na powierzchni opakowania [uSv/h]</label>
+            <input class="form-control" id="dose" max="100000000" min="0" name="dose" required step="0.01"
+                   type="number">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="mes_distance">Odległość [cm]</label>
+            <input class="form-control" id="mes_distance" max="10000" min="0" name="mes_distance" required
+                   step="0.1" type="number">
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="gear_select">Numer seryjny przyrządu</label>
+            <select class="form-control" id="gear_select" name="gear_select">
+                {% for g in gear %}
+                <option value='{{g.sprzet_id}}'>{{g.nazwa}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label for="mes_date">Data wykonania pomiaru</label>
+                <input class="form-control" id="mes_date" name="mes_date" placeholder="YYYY-MM-DD" required type="date">
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="mes_time">Godzina wykonania pomiaru</label>
+                <input class="form-control" id="mes_time" name="mes_time" placeholder="HH:mm" type="time" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="person_making_mes">Osoba wykonująca pomiar</label>
+                <input class="form-control" id="person_making_mes" name="person_making_mes" placeholder="Nazwisko"
+                       required type="text">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit" style="display:block; margin:0 auto">Wyrzuć</button>
+</form>
+</div>
+{% endblock %}

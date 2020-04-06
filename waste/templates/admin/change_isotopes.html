@@ -1,0 +1,27 @@
+{% extends 'admin/change_form.html' %}
+
+{% block content %}
+<form method="POST" action="/admin/waste/izotopy/my_view/" name="{{ opts.model_name }}_form" id="{{ opts.model_name }}_form">
+    <input name="waste" type="text" class="form-control" id="waste" value="{{ob.odpad_id}}" readonly style="width:196px">
+    {% csrf_token %}
+    <fieldset>
+        <div>
+            <h4 style="font-size: 17px; font-style: normal; font: arial; font-weight: normal">Izotopy</h4>
+            <table style="border:2px; border-style:solid; border-color:lightgrey; padding:2em; width: 386px; height:fit-content; min-height: 128px; float: left;">
+                <tr style="display: inline; align-content: left">
+                    {% for i in all_isotopes %}
+                    <td style="display: inline-block; align-content: right; width: 24%; text-align: left; padding-left: 1em;">
+                        <input style="text-space: 5px; width:fit-content" type="checkbox" size="17px"
+                               name="isotopeSelect"
+                               value="{{i.izotop_id}}"> {{i.nazwa}}
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+    <div class="submit-row">
+
+        <input type="submit" value="Zapisz" class="default" name="_save">
+</form>
+{% endblock %}

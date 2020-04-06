@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <div class="col-md-4 mb-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<h1 style="text-align: center">Przeglądanie odpadów</h1>
+
+<ul class="nav justify-content-end">
+    <li class="nav-item">
+        <a class="nav-link active" href="/waste/view_week">Tydzień</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_month">Miesiąc</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_quarter">Kwartał</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_year">Rok</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/waste/view_all">Wszystko</a>
+    </li>
+</ul>
+
+<div class="table">
+    <table class="table table-hover table-dark" width="100%" id="dtBasicExample">
+        <thead>
+        <tr>
+            <th scope="col">Numer ewidencyjny</th>
+            <th scope="col">Bieżąca lokalizacja</th>
+            <th scope="col">Data przekazania</th>
+            <th scope="col">Data wydania</th>
+            <th scope="col">Grupa odpadów</th>
+            <th scope="col">Postać fizyczna</th>
+            <th scope="col">Nazwa pracowni</th>
+            <th scope="col">Przekazany przez</th>
+            <th scope="col">Przyjęty przez</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for l in location %}
+        <tr>
+            <td><a style="color:white" href="/waste/search_by_name?ref_num={{l.id_odpadu.nr_ewidencyjny}}">{{l.id_odpadu.nr_ewidencyjny}}</a></td>
+            {% if l.id_polki.pokoj != 'UT' %}
+            <td> {{l.id_polki.budynek}} | p. {{l.id_polki.pokoj}} | {{l.id_polki.opis}}</td>
+            {% else %}
+            <td>{{l.id_polki.opis}}</td>
+            {% endif %}
+            <td>{{l.id_odpadu.data_przekazania_do}}</td>
+            {% if l.id_odpadu.data_wydania != None %}
+            <td>{{l.id_odpadu.data_wydania}}</td>
+            {% else %}
+            <td>Nie wyrzucono</td>
+            {% endif %}
+            <td>{{l.id_odpadu.grupa_odpadow.nazwa}}</td>
+            <td>{{l.id_odpadu.postac_fiz.nazwa}}</td>
+            <td>{{l.id_odpadu.nazwa_pracowni.nazwa}}</td>
+            <td>{{l.id_odpadu.osoba_przekazanie_do.nazwa}}</td>
+            <td>{{l.id_odpadu.osoba_przyjmujaca.nazwa}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if location.has_previous %}
+            <a href="?page=1">&laquo; początek</a>
+            <a href="?page={{ location.previous_page_number }}">poprzednia</a>
+        {% endif %}
+
+        <span class="current">
+            Strona {{ location.number }} z {{ location.paginator.num_pages }}.
+        </span>
+
+        {% if location.has_next %}
+            <a href="?page={{ location.next_page_number }}">następna</a>
+            <a href="?page={{ location.paginator.num_pages }}">ostatnia &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}
+
+
