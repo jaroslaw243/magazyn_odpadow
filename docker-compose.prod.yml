@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'magazyn_odpadow'
+      MYSQL_USER: 'waste_storage'
+      MYSQL_PASSWORD: 'rosnie_niechurosnie'
+      MYSQL_ROOT_PASSWORD: 'rosnie_niechurosnie'
+    volumes:
+      - my-db:/var/lib/mysql
+      - ./mysql-dump:/docker-entrypoint-initdb.d
+    ports:
+      - '3307:3306'
+    expose:
+      - '3307'
+  web:
+    image: jaroslaw243/tiibd:latest
+    command: bash -c "until echo >/dev/tcp/db/3306; do sleep 1;done && gunicorn waste_storage.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - static_volume:/code/static
+    expose:
+      - "8000"
+    depends_on:
+      - db
+    env_file:
+      - ./.env.dev
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/code/static
+    ports:
+      - 1410:80
+    depends_on:
+      - web
+
+volumes:
+  my-db:
+  static_volume:

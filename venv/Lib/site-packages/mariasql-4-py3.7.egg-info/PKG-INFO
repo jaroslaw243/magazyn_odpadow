@@ -1,0 +1,98 @@
+Metadata-Version: 1.0
+Name: mariasql
+Version: 4
+Summary: MariaDB/MySQL query builder primary for inserting and updating Python dictionaries into tables.
+Home-page: https://git.osuv.de/m/mariasql
+Author: Markus Bergholz
+Author-email: markuman@gmail.com
+License: WTFPL
+Description: # MariaSQL
+        
+        Nowadays selecting data is easy, but inserting and updating data is annoying.
+        
+        * https://git.osuv.de/m/MariaSQL
+        * Mirror, Issues & PRs: https://gitlab.com/markuman/MariaSQL
+        
+        # install
+        
+        with `pip3 install mariasql --user`
+        
+        # Example / Usage
+        
+        start a temporary MariaDB  
+        `docker run -d -p 3307:3306 --rm  --name mariadb -e MYSQL_ROOT_PASSWORD=password mariadb`
+        
+        start python3 and go
+        
+        ```python
+        >>> import MariaSQL
+        >>> db = MariaSQL.MariaSQL(host='127.0.0.1', port=3307)
+        >>> db.query('create database mariasql;')
+        ()
+        >>> db.use('mariasql')
+        >>> # we can create tables based on dict definitions
+        >>> mytable = dict()
+        >>> mytable['id'] = int
+        >>> mytable['name'] = str
+        >>> mytable['some shitty column name'] = float
+        >>> db.create_table('test_table', mytable)
+        ()
+        >>> db.show_tables()
+        [{'Tables_in_mariasql': 'test_table'}]
+        >>> # now we inserting a dict into the create tables
+        >>> data = dict()
+        >>> data['id'] = 12
+        >>> data['name'] = 'Alf'
+        >>> data['some shitty column name'] = 3.1415
+        >>> db.insert('test_table', data)
+        ()
+        # let's read from create table
+        >>> dataset = db.query('select * from test_table')
+        >>> dataset
+        [{'id': 12, 'name': 'Alf', 'some shitty column name': 3.1415}]
+        >>> db.query('show create table test_table')
+        [{'Table': 'test_table', 'Create Table': 'CREATE TABLE `test_table` (\n  `id` int(11) DEFAULT NULL,\n  `name` varchar(255) DEFAULT NULL,\n  `some shitty column name` double DEFAULT NULL\n) ENGINE=InnoDB DEFAULT CHARSET=utf8'}]
+        ```
+        
+        # Properties
+        
+        | variabele | default value |
+        | --- | --- |
+        | host | localhost |
+        | port | 3306 |
+        | user | root |
+        | password | password |
+        | db | mysql |
+        | charset | utf8mb4 |
+        
+        # Methods
+        
+        * `db.use(dbname)`
+          * to change the database
+        * `db.show_tables()`
+          * get list of current tables in selected database
+        * `db.query(sql)`
+          * execute raw sql commands
+        * `db.create_db(dbname)`
+          * create a new database if not exists
+        * `db.create_table(name, tabledef = None)`
+          * When `tabledef` is not given, `name` must be a raw sql string which will be executed
+          * When `tabledef` is a dict() and its `keys` are just datatype definitions, a table based on this dict will be created
+            * datatye limitations when using dict() definitions
+              * `str` -> `VARCHAR(255)`
+              * `int` -> `INT`
+              * `float` -> `DOUBLE`
+              * `dict` -> `JSON`
+        * `db.insert(table, data, on_duplicate = False)`
+          * `data` must be a `dict()` with `keys` which exists as `COLUMN_NAME` in the sql table. But it must not include all column names.
+          * when `on_duplicate` is set to `True`, it will perform an update when the PKs already exists in the table.
+        * `db.insert_on_duplicate(table, data)`
+          * just a wrapper for `db.insert()` with `on_duplicate = True`.
+        
+        # todo
+        
+        * some tests and setup ci/cd
+        * update method
+        * insert/update list of dicts
+        
+Platform: UNKNOWN
