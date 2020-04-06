@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'tiibd'
+      MYSQL_USER: 'root'
+      MYSQL_ALLOW_EMPTY_PASSWORD: "true"
+    volumes:
+      - my-db:/var/lib/mysql
+      - ./mysql-dump/tiibd_nowa.sql:/docker-entrypoint-initdb.d/tiibd_nowa.sql
+    ports:
+      - '3307:3306'
+    expose:
+      - '3307'
+  web:
+    image: jaroslaw243/tiibd:latest
+    command: bash -c "until echo >/dev/tcp/db/3306; do sleep 1;done && python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8002:8000"
+    depends_on:
+      - db
+
+volumes:
+  my-db:
