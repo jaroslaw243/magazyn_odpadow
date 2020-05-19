@@ -6,3 +6,4 @@ docker-compose.prod.yml
 waste_storage/settings.py
 waste_storage/settings_prod.py
 waste_storage/settings_dev.py
+venv/Include/
