@@ -6,6 +6,6 @@ Serwerem aplikacji jest gunicorn, proxy nginx a baza danych to mySQL/mariaDB. Ca
 
 # Struktura
 
-aplikacja 'waste'  
-projekt 'waste_storage'  
+aplikacja `waste`  
+projekt `waste_storage`  
 
