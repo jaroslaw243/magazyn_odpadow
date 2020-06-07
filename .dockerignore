@@ -1,3 +1,4 @@
+.git
 .idea
 mysql-dump
 nginx
@@ -6,3 +7,6 @@ docker-compose.prod.yml
 waste_storage/settings_prod.py
 waste_storage/settings_dev.py
 venv
+waste/__pycache__/
+waste_storage/__pycache__/
+waste/static
