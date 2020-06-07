@@ -160,9 +160,14 @@ class Liczniki(models.Model):
     rok = models.PositiveSmallIntegerField()
     opis = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.opis
+
     class Meta:
         managed = False
         db_table = 'liczniki'
+        verbose_name = 'Licznik odpadów'
+        verbose_name_plural = 'Liczniki odpadów'
 
 
 class Lokalizacja(models.Model):

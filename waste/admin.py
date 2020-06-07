@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
 from .models import Izotop, Slownik, Sprzet, Polka, Odpad, Osoby, RoedigerZbiorniki, RoedigerPomiary, Pomiartlo, Pomiar, \
-    Izotopy
+    Izotopy, Liczniki
 from django.urls import path
 from django.shortcuts import render, redirect
 import datetime
@@ -241,6 +241,17 @@ class RoedigerPomiaryAdmin(admin.ModelAdmin):
     search_fields = ['wykonal__nazwa']
 
 
+class LicznikiAdmin(admin.ModelAdmin):
+    exclude = ['licznik_id']
+    list_display = ['opis', 'wartosc', 'rok']
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.register(Odpad, OdpadAdmin)
 admin.site.register(Sprzet, SprzetAdmin)
 admin.site.register(Slownik, SlownikAdmin)
@@ -252,3 +263,4 @@ admin.site.register(Pomiar, PomiarAdmin)
 admin.site.register(RoedigerZbiorniki, RoedigerZbiornikiAdmin)
 admin.site.register(RoedigerPomiary, RoedigerPomiaryAdmin)
 admin.site.register(Izotopy, IzotopyAdmin)
+admin.site.register(Liczniki, LicznikiAdmin)
