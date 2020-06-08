@@ -9,4 +9,4 @@ waste_storage/settings_dev.py
 venv
 waste/__pycache__/
 waste_storage/__pycache__/
-waste/static
+waste/static/

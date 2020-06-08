@@ -1,6 +1,7 @@
 import dateutil
 import datetime
-from .models import Pomiartlo, Pomiar, Lokalizacja, Liczniki, Sprzet
+from .models import Pomiartlo, Pomiar, Lokalizacja, Liczniki, Sprzet, RoedigerPomiary
+from django.core.paginator import Paginator
 
 
 def nearest(items, pivot):
@@ -71,3 +72,30 @@ def check_calibration_validity(date, gear):
     else:
         return 1
 
+
+def waste_db_time_period(request, delta):
+    date_now = datetime.datetime.now()
+    location = Lokalizacja.objects.filter(data_umieszczenia__gte=date_now - delta,
+                                          data_umieszczenia__lte=date_now)
+    location = location.filter(biezacy=1).order_by('-data_umieszczenia')
+    paginator = Paginator(location, 20)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
+
+def bck_rad_time_period(request, delta):
+    date_now = datetime.datetime.now()
+    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now - delta,
+                                      data_pomiaru__lte=date_now).order_by('-data_pomiaru')
+    paginator = Paginator(mes_bg, 20)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)
+
+
+def view_tanks_time_period(request, delta):
+    date_now = datetime.datetime.now()
+    tanks = RoedigerPomiary.objects.filter(data_pomiaru__gte=date_now - delta,
+                                           data_pomiaru__lte=date_now).order_by('-data_pomiaru')
+    paginator = Paginator(tanks, 20)
+    page_number = request.GET.get('page')
+    return paginator.get_page(page_number)

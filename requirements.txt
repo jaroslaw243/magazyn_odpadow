@@ -6,7 +6,3 @@ mysqlclient==1.4.6
 python-dateutil
 django-javascript_settings
 gunicorn==20.0.4
-
-
-
-

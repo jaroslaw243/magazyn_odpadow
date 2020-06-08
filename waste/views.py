@@ -10,7 +10,8 @@ import dateutil.relativedelta
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
-from .views_add_on import measurement_value_check, measurement_time_check, get_counter, check_calibration_validity
+from .views_add_on import measurement_value_check, measurement_time_check, get_counter, check_calibration_validity, \
+    waste_db_time_period, bck_rad_time_period, view_tanks_time_period
 from reportlab.pdfgen import canvas
 import io
 
@@ -54,50 +55,23 @@ def add_form(request):
 
 
 def view_db_waste_week(request):
-    date_now_w = datetime.datetime.now()
-    location = Lokalizacja.objects.filter(data_umieszczenia__gte=date_now_w - datetime.timedelta(days=7),
-                                          data_umieszczenia__lte=date_now_w)
-    location = location.filter(biezacy=1).order_by('-data_umieszczenia')
-    paginator = Paginator(location, 20)
-    page_number = request.GET.get('page')
-    location_page = paginator.get_page(page_number)
-    return render(request, 'view_db_waste.html', {'location': location_page})
+    return render(request, 'view_db_waste.html',
+                  {'location': waste_db_time_period(request, datetime.timedelta(days=7))})
 
 
 def view_db_waste_month(request):
-    date_now_m = datetime.datetime.now()
-    location = Lokalizacja.objects.filter(
-        data_umieszczenia__gte=date_now_m - dateutil.relativedelta.relativedelta(months=1),
-        data_umieszczenia__lte=date_now_m)
-    location = location.filter(biezacy=1).order_by('-data_umieszczenia')
-    paginator = Paginator(location, 20)
-    page_number = request.GET.get('page')
-    location_page = paginator.get_page(page_number)
-    return render(request, 'view_db_waste.html', {'location': location_page})
+    return render(request, 'view_db_waste.html',
+                  {'location': waste_db_time_period(request, dateutil.relativedelta.relativedelta(months=1))})
 
 
 def view_db_waste_quarter(request):
-    date_now_q = datetime.datetime.now()
-    location = Lokalizacja.objects.filter(
-        data_umieszczenia__gte=date_now_q - dateutil.relativedelta.relativedelta(months=3),
-        data_umieszczenia__lte=date_now_q)
-    location = location.filter(biezacy=1).order_by('-data_umieszczenia')
-    paginator = Paginator(location, 20)
-    page_number = request.GET.get('page')
-    location_page = paginator.get_page(page_number)
-    return render(request, 'view_db_waste.html', {'location': location_page})
+    return render(request, 'view_db_waste.html',
+                  {'location': waste_db_time_period(request, dateutil.relativedelta.relativedelta(months=3))})
 
 
 def view_db_waste_year(request):
-    date_now_y = datetime.datetime.now()
-    location = Lokalizacja.objects.filter(
-        data_umieszczenia__gte=date_now_y - dateutil.relativedelta.relativedelta(years=1),
-        data_umieszczenia__lte=date_now_y)
-    location = location.filter(biezacy=1).order_by('-data_umieszczenia')
-    paginator = Paginator(location, 20)
-    page_number = request.GET.get('page')
-    location_page = paginator.get_page(page_number)
-    return render(request, 'view_db_waste.html', {'location': location_page})
+    return render(request, 'view_db_waste.html',
+                  {'location': waste_db_time_period(request, dateutil.relativedelta.relativedelta(years=1))})
 
 
 def view_db_waste_all(request):
@@ -252,43 +226,22 @@ def remove_waste_submit(request):
 
 
 def bck_rad_week(request):
-    date_now_w = datetime.datetime.now()
-    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now_w - datetime.timedelta(days=7),
-                                      data_pomiaru__lte=date_now_w).order_by('-data_pomiaru')
-    paginator = Paginator(mes_bg, 20)
-    page_number = request.GET.get('page')
-    mes_bg_page = paginator.get_page(page_number)
-    return render(request, 'bck_rad.html', {'mes_bg': mes_bg_page})
+    return render(request, 'bck_rad.html', {'mes_bg': bck_rad_time_period(request, datetime.timedelta(days=7))})
 
 
 def bck_rad_month(request):
-    date_now_m = datetime.datetime.now()
-    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now_m - dateutil.relativedelta.relativedelta(months=1),
-                                      data_pomiaru__lte=date_now_m).order_by('-data_pomiaru')
-    paginator = Paginator(mes_bg, 20)
-    page_number = request.GET.get('page')
-    mes_bg_page = paginator.get_page(page_number)
-    return render(request, 'bck_rad.html', {'mes_bg': mes_bg_page})
+    return render(request, 'bck_rad.html',
+                  {'mes_bg': bck_rad_time_period(request, dateutil.relativedelta.relativedelta(months=1))})
 
 
 def bck_rad_quarter(request):
-    date_now_q = datetime.datetime.now()
-    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now_q - dateutil.relativedelta.relativedelta(months=3),
-                                      data_pomiaru__lte=date_now_q).order_by('-data_pomiaru')
-    paginator = Paginator(mes_bg, 20)
-    page_number = request.GET.get('page')
-    mes_bg_page = paginator.get_page(page_number)
-    return render(request, 'bck_rad.html', {'mes_bg': mes_bg_page})
+    return render(request, 'bck_rad.html',
+                  {'mes_bg': bck_rad_time_period(request, dateutil.relativedelta.relativedelta(months=3))})
 
 
 def bck_rad_year(request):
-    date_now_y = datetime.datetime.now()
-    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now_y - dateutil.relativedelta.relativedelta(years=1),
-                                      data_pomiaru__lte=date_now_y).order_by('-data_pomiaru')
-    paginator = Paginator(mes_bg, 20)
-    page_number = request.GET.get('page')
-    mes_bg_page = paginator.get_page(page_number)
-    return render(request, 'bck_rad.html', {'mes_bg': mes_bg_page})
+    return render(request, 'bck_rad.html',
+                  {'mes_bg': bck_rad_time_period(request, dateutil.relativedelta.relativedelta(years=1))})
 
 
 def bck_rad_all(request):
@@ -803,13 +756,8 @@ def tank_mes_submit(request):
 
 
 def view_tanks_month(request):
-    now_t_m = datetime.datetime.now()
-    tanks = RoedigerPomiary.objects.filter(data_pomiaru__gte=now_t_m - dateutil.relativedelta.relativedelta(months=1),
-                                           data_pomiaru__lte=now_t_m).order_by('-data_pomiaru')
-    paginator = Paginator(tanks, 20)
-    page_number = request.GET.get('page')
-    tanks_page = paginator.get_page(page_number)
-    return render(request, 'view_tanks.html', {'tanks': tanks_page})
+    return render(request, 'view_tanks.html',
+                  {'tanks': view_tanks_time_period(request, dateutil.relativedelta.relativedelta(months=1))})
 
 
 def view_tanks_all(request):
