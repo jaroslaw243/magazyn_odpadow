@@ -124,7 +124,7 @@ class DjangoSession(models.Model):
 class Izotop(models.Model):
     izotop_id = models.SmallIntegerField(primary_key=True)
     nazwa = models.CharField(max_length=10)
-    t_polokres = models.FloatField(db_column='T_polokres', verbose_name='Okres połowicznego rozpadu w dniach')  # Field name made lowercase.
+    t_polokres = models.FloatField(db_column='T_polokres', verbose_name='Okres połowicznego rozpadu w dniach')
     active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
 
     def __str__(self):
@@ -156,7 +156,7 @@ class Izotopy(models.Model):
 
 class Liczniki(models.Model):
     licznik_id = models.AutoField(primary_key=True)
-    wartosc = models.SmallIntegerField()
+    wartosc = models.PositiveIntegerField()
     rok = models.PositiveSmallIntegerField()
     opis = models.CharField(max_length=255)
 
