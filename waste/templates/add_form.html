@@ -6,224 +6,278 @@
 <h1 style="text-align: center">Składowanie odpadów</h1>
 <p></p>
 <div class="row">
-<div class="col-md-6" style="text-align: right; padding-right: 35px">
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <div class="col-md-4 mb-3">
-        <div class="alert alert-primary alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-    </div>
-    {% endfor %}
-</ul>
-{% endif %}
-
-<form method="POST" action="add_to_db_submit" name="add_form" id="add_form">
-    {% csrf_token %}
-    <h4>Pochodzenie</h4>
-    <div class="row" style="text-align: right">
-        <div class="col-md-12" style="text-align: right">
-            <div>
-                <label for="lab_name" style="width: 386px;  text-align: left">Nazwa pracowni</label>
+    <div class="col-md-6" style="text-align: right; padding-right: 35px">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <div class="col-md-4 mb-3">
+                <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
             </div>
-                <select class="form-control" id="lab_name" name="lab_name" style="width: 386px; display: inline-block;">
-                    {% for l in lab_name %}
-                    <option value='{{l.slownik_id}}'>{{l.nazwa}}</option>
-                    {% endfor %}
-                </select>
-        </div>
-        <p></p>
-        <div class="col-md-12" style="text-align: right">
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form method="POST" action="add_to_db_submit" name="add_form" id="add_form">
+            {% csrf_token %}
+            <h4>Pochodzenie</h4>
+            <div class="row" style="text-align: right">
+                <div class="col-md-12" style="text-align: right">
+                    <div>
+                        <label for="lab_name" style="width: 386px;  text-align: left">Nazwa pracowni</label>
+                    </div>
+                    <select class="form-control" id="lab_name" name="lab_name"
+                            style="width: 386px; display: inline-block;">
+                        {% for l in lab_name %}
+                        <option value='{{l.slownik_id}}'>{{l.nazwa}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <p></p>
+                <div class="col-md-12" style="text-align: right">
+                    <p></p>
+                    <div>
+                        <label for="place_origin" style="width: 386px; text-align: left">Miejsce powstania
+                            odpadu</label>
+                    </div>
+                    <select class="form-control" id="place_origin" name="place_origin"
+                            style="width: 386px; display: inline-block;">
+                        {% for p in p_of_origin %}
+                        <option value='{{p.slownik_id}}'>{{p.nazwa}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
             <p></p>
-            <div>
-                <label for="place_origin" style="width: 386px; text-align: left">Miejsce powstania odpadu</label>
+            <h4>Charakterystyka odpadów</h4>
+            <div class="row" style="text-align: right;">
+                <div class="col"></div>
+                <div class="col-md-4 col-sm-4" style="text-align: right; max-width: 209px;">
+                    <label for="lab_name">Postać fizyczna</label><br>
+                    <select class="form-control" id="ph_form" name="ph_form">
+                        <option value='7'>Stała</option>
+                        <option value='8'>Ciekła</option>
+                    </select>
+                </div>
+                <div class="col-md-4 col-sm-4" style="text-align: right; max-width: 209px;">
+                    <label for="container">Rodzaj opakowania</label><br>
+                    <select class="form-control" id="container" name="container">
+                        <option value='11'>Worek foliowy</option>
+                        <option value='12'>Pudełko</option>
+                    </select>
+                </div>
             </div>
-                <select class="form-control" id="place_origin" name="place_origin" style="width: 386px; display: inline-block;">
-                    {% for p in p_of_origin %}
-                    <option value='{{p.slownik_id}}'>{{p.nazwa}}</option>
-                    {% endfor %}
-                </select>
-        </div>
-
-    </div>
-    <p></p>
-    <h4>Charakterystyka odpadów</h4>
-    <div class="row" style="text-align: right;">
-    <div class="col"></div>
-        <div class="col-md-4 col-sm-4" style="text-align: right; max-width: 209px;">
-            <label for="lab_name">Postać fizyczna</label><br>
-            <select class="form-control" id="ph_form" name="ph_form">
-                <option value='7'>Stała</option>
-                <option value='8'>Ciekła</option>
-            </select>
-</div>
-            <div class="col-md-4 col-sm-4" style="text-align: right; max-width: 209px;">
-            <label for="container">Rodzaj opakowania</label><br>
-            <select class="form-control" id="container" name="container">
-                <option value='11'>Worek foliowy</option>
-                <option value='12'>Pudełko</option>
-            </select>
-                </div>
-                </div>
             <p></p>
             <fieldset>
 
                 <div>
-    <h4 style="font-size: 17px; font-style: normal; font: arial; font-weight: normal">Izotopy</h4>
+                    <h4 style="font-size: 17px; font-style: normal; font: arial; font-weight: normal">Izotopy</h4>
                     <table style="border:2px; border-style:solid; border-color:lightgrey; padding:2em; width: 386px; height:fit-content; min-height: 128px; float: right;">
-                <tr style="display: inline; align-content: right">
-                    {% for i in isotope %}
-                    <td style="display: inline-block; align-content: right; width: 24%; text-align: left; padding-left: 1em;">
-                    <input style="text-space: 5px; width:fit-content" type="checkbox" size="17px" name="isotopeSelect" value="{{i.izotop_id}}"> {{i.nazwa}}
-                </td>
-                    {% endfor %}
-                    </tr>
-                </table>
+                        <tr style="display: inline; align-content: right">
+                            {% for i in isotope %}
+                            <td style="display: inline-block; align-content: right; width: 24%; text-align: left; padding-left: 1em;">
+                                <input style="text-space: 5px; width:fit-content" type="checkbox" size="17px"
+                                       name="isotopeSelect" value="{{i.izotop_id}}"> {{i.nazwa}}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
                 </div>
             </fieldset>
-<p></p>
+            <p></p>
             <div class="row" style="text-align: right">
                 <div class="col-md-12" style="text-align: right">
                     <div>
-                <label for="act" style="width:386px; text-align: left">Aktywność (stężenie promieniotwórcze)</label>
+                        <label for="act" style="width:386px; text-align: left">Aktywność (stężenie
+                            promieniotwórcze)</label>
                     </div>
-                <input style="width: 386px; display: inline-block;" name="act" type="number" class="form-control" id="act" step="0.1" min="0" max="1000000" required>
+                    <input style="width: 386px; display: inline-block;" name="act" type="number" class="form-control"
+                           id="act" step="0.1" min="0" max="1000000" required>
                 </div>
-                 <div class="col-md-12" style="text-align: right">
+                <div class="col-md-12" style="text-align: right">
                     <div>
                         <p></p>
-            <label for="quantity" style="width:386px; text-align: left">Ilość (objętość)</label>
+                        <label for="quantity" style="width:386px; text-align: left">Ilość (objętość)</label>
                     </div>
-            <input style="width: 386px; display: inline-block;" name="quantity" type="number" class="form-control" id="quantity" step="0.1" min="0" max="1000000"
-                   required>
-                 </div>
+                    <input style="width: 386px; display: inline-block;" name="quantity" type="number"
+                           class="form-control" id="quantity" step="0.1" min="0" max="1000000"
+                           required>
+                </div>
             </div>
             <p></p>
-           <div class="row" style="text-align: right">
-               <div class="col-md-12" style="text-align: right">
-                <div>
-            <label for="waste_group" style="width:386px; text-align: left">Grupa odpadów</label>
+            <div class="row" style="text-align: right">
+                <div class="col-md-12" style="text-align: right">
+                    <div>
+                        <label for="waste_group" style="width:386px; text-align: left">Grupa odpadów</label>
+                    </div>
+                    <select style="max-width:386px; display: inline-block;" class="form-control" id="waste_group"
+                            name="waste_group">
+                        {% for wg in waste_group %}
+                        <option value='{{wg.slownik_id}}'>{{wg.nazwa}}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            <select style="max-width:386px; display: inline-block;" class="form-control" id="waste_group" name="waste_group">
-                {% for wg in waste_group %}
-                <option value='{{wg.slownik_id}}'>{{wg.nazwa}}</option>
-                {% endfor %}
-            </select>
-               </div>
-           </div>
+            </div>
 
-    <p></p>
-    <div>
-<label for="properties_a" style="width:386px; text-align: left">
-Właściwości</label>
+            <p></p>
+            <div>
+                <label for="properties_a" style="width:386px; text-align: left">
+                    Właściwości</label>
+            </div>
+            <div style="padding-bottom: 1.5rem;">
+                <textarea style="height: 100px; max-width: 386px; display: inline;" name="properties_a" type="text"
+                          class="form-control" id="properties_a" aria-describedby="inputGroup-properties_a"
+                          placeholder="Ciekłe"></textarea>
+            </div>
+            <div>
+                <textarea style="height: 100px; max-width: 386px; display: inline;" name="properties_b" type="text"
+                          class="form-control" id="properties_b" aria-describedby="inputGroup-properties_a"
+                          placeholder="Stałe"></textarea>
+            </div>
+            <p></p>
+    </div>
+    <div class="col-md-6">
+        <h4>Przekazanie na magazyn</h4>
+        <div class="form-row">
+            <div class="col-md-1.5 mb-3">
+                <label for="shelf">Tag półki/kosza</label>
+                <input name="shelf" type="text" class="form-control" id="shelf" placeholder="R#P#" style="width:210px;"
+                       required>
+            </div>
+            <div class="col-md-0.725 mb-3">
+                <label for="building">Budynek</label>
+                <select name="building" class="form-control" id="building" style="width:210px;">
+                    <option value="SB">Stary budynek</option>
+                    <option value="NB">Nowy budynek</option>
+                </select>
+            </div>
+            <div class="col-md-0.725 mb-3">
+                <label for="room">Pokój</label>
+                <select name="room" class="form-control" id="room">
+                    {% for r in rooms %}
+                    <option value="{{r.pokoj}}">{{r.pokoj}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-1.5 mb-3">
+                <label for="hand_on_date">Data przekazania</label>
+                <input name="hand_on_date" type="date" class="form-control" id="hand_on_date" placeholder="YYYY-MM-DD"
+                       style="width:210px;"
+                       required>
+            </div>
+            <div class="col-md-1.5 mb-3">
+                <label for="hand_on_time">Godzina przekazania</label>
+                <input name="hand_on_time" type="time" class="form-control" id="hand_on_time" placeholder="HH:mm"
+                       style="width:210px;" required>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-1.5 mb-3">
+                <label for="person_giving" style="width:200px">Osoba przekazująca</label>
+                <input name="person_giving" type="text" class="form-control" id="person_giving" placeholder="Nazwisko"
+                       style="width:210px"
+                       required>
+            </div>
+            <div class="col-md-1.5 mb-3">
+                <label for="person_receiving" style="width:200px">Osoba odbierająca</label>
+                <input name="person_receiving" type="text" class="form-control" id="person_receiving"
+                       placeholder="Nazwisko" style="width:210px;"
+                       required>
+            </div>
+        </div>
+        <h4>Pomiary radiometryczne</h4>
+        <label for="dose">Moc dawki na powierzchni opakowania [uSv/h]</label>
+        <input name="dose" type="number" step="0.01" min="0" max="100000000" class="form-control" id="dose"
+               style="width:100px">
+        <p></p>
+        <div class="form-row">
+            <div class="col-md-1.5 mb-3">
+                <label for="mes_distance">Odległość [cm]</label>
+                <input name="mes_distance" type="number" step="0.1" min="0" max="10000" class="form-control"
+                       id="mes_distance" style="width:100px">
+            </div>
+            <div class="col-md-1 mb-3">
+                <label style="width:386px" for="contaminationSelect">Skażenie zewnętrzne</label>
+                <select style="width: fit-content" name="contaminationSelect" class="form-control"
+                        id="contaminationSelect" style="width:100px">
+                    <option value="0">Nie</option>
+                    <option value="1">Tak</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-3 mb-3">
+                <label style="width: 386px" for="gear_select">Numer seryjny przyrządu</label>
+                <select style="width:386px" class="form-control" id="gear_select" name="gear_select">
+                    {% for g in gear %}
+                    <option value='{{g.sprzet_id}}'>{{g.nazwa}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-1.5 mb-3">
+                <label for="mes_date">Data wykonania pomiaru</label>
+                <input name="mes_date" type="date" class="form-control" id="mes_date" placeholder="YYYY-MM-DD"
+                       style="width:190px">
+            </div>
+            <div class="col-md-1.5 mb-3">
+                <label for="mes_time">Godzina wykonania pomiaru</label>
+                <input name="mes_time" type="time" class="form-control" id="mes_time" placeholder="HH:mm"
+                       style="width:190px">
+            </div>
+        </div>
+        <label for="person_making_mes">Osoba wykonująca pomiar</label>
+        <input name="person_making_mes" type="text" class="form-control" id="person_making_mes"
+               placeholder="Nazwisko" style="width:386px">
+        <p></p>
+    </div>
 </div>
-<div style="padding-bottom: 1.5rem;">
-                <textarea style="height: 100px; max-width: 386px; display: inline;" name="properties_a" type="text" class="form-control" id="properties_a" aria-describedby="inputGroup-properties_a" placeholder="Ciekłe"></textarea>
-                </div>
-                <div>
-                <textarea style="height: 100px; max-width: 386px; display: inline;" name="properties_b" type="text" class="form-control" id="properties_b" aria-describedby="inputGroup-properties_a" placeholder="Stałe"></textarea>
-                </div>
-    <p></p>
-    </div>
-<div class="col-md-6">
-    <h4>Przekazanie na magazyn</h4>
-    <div class="form-row">
-        <div class="col-md-1.5 mb-3">
-            <label for="shelf">Tag półki/kosza</label>
-            <input name="shelf" type="text" class="form-control" id="shelf" placeholder="R#P#" style="width:210px;" required>
-        </div>
-        <div class="col-md-0.725 mb-3">
-            <label for="building">Budynek</label>
-            <select name="building" class="form-control" id="building" style="width:210px;">
-                <option value="SB">Stary budynek</option>
-                <option value="NB">Nowy budynek</option>
-            </select>
-        </div>
-        <div class="col-md-0.725 mb-3">
-            <label for="room">Pokój</label>
-            <select name="room" class="form-control" id="room">
-                {% for r in rooms %}
-                <option value="{{r.pokoj}}">{{r.pokoj}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-1.5 mb-3">
-            <label for="hand_on_date">Data przekazania</label>
-            <input name="hand_on_date" type="date" class="form-control" id="hand_on_date" placeholder="YYYY-MM-DD" style="width:210px;"
-                   required>
-        </div>
-        <div class="col-md-1.5 mb-3">
-            <label for="hand_on_time">Godzina przekazania</label>
-            <input name="hand_on_time" type="time" class="form-control" id="hand_on_time" placeholder="HH:mm" style="width:210px;" required>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-1.5 mb-3">
-            <label for="person_giving" style="width:200px">Osoba przekazująca</label>
-            <input name="person_giving" type="text" class="form-control" id="person_giving" placeholder="Nazwisko" style="width:210px"
-                   required>
-        </div>
-        <div class="col-md-1.5 mb-3">
-            <label for="person_receiving" style="width:200px">Osoba odbierająca</label>
-            <input name="person_receiving" type="text" class="form-control" id="person_receiving"
-                   placeholder="Nazwisko" style="width:210px;"
-                   required>
-        </div>
-    </div>
-    <h4>Pomiary radiometryczne</h4>
-            <label for="dose">Moc dawki na powierzchni opakowania [uSv/h]</label>
-            <input name="dose" type="number" step="0.01" min="0" max="100000000" class="form-control" id="dose"
-                   style="width:100px">
-    <p></p>
-    <div class="form-row">
-        <div class="col-md-1.5 mb-3">
-            <label for="mes_distance">Odległość [cm]</label>
-            <input name="mes_distance" type="number" step="0.1" min="0" max="10000" class="form-control"
-                   id="mes_distance" style="width:100px">
-        </div>
-        <div class="col-md-1 mb-3">
-            <label style="width:386px" for="contaminationSelect">Skażenie zewnętrzne</label>
-            <select style="width: fit-content" name="contaminationSelect" class="form-control" id="contaminationSelect" style="width:100px">
-                <option value="0">Nie</option>
-                <option value="1">Tak</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-3 mb-3">
-            <label style="width: 386px" for="gear_select">Numer seryjny przyrządu</label>
-            <select style="width:386px" class="form-control" id="gear_select" name="gear_select">
-                {% for g in gear %}
-                <option value='{{g.sprzet_id}}'>{{g.nazwa}}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-    <div class="form-row">
-        <div class="col-md-1.5 mb-3">
-            <label for="mes_date">Data wykonania pomiaru</label>
-            <input name="mes_date" type="date" class="form-control" id="mes_date" placeholder="YYYY-MM-DD" style="width:190px">
-        </div>
-        <div class="col-md-1.5 mb-3">
-            <label for="mes_time">Godzina wykonania pomiaru</label>
-            <input name="mes_time" type="time" class="form-control" id="mes_time" placeholder="HH:mm" style="width:190px">
-        </div>
-    </div>
-            <label for="person_making_mes">Osoba wykonująca pomiar</label>
-            <input name="person_making_mes" type="text" class="form-control" id="person_making_mes"
-                   placeholder="Nazwisko" style="width:386px">
-    <p></p>
-    </div>
-</div>
-    <button style="height:60px; width:120px; float: bottom; display: block; margin: auto" class="btn btn-primary" type="submit">Dodaj</button>
-    <p></p>
+<button style="height:60px; width:120px; float: bottom; display: block; margin: auto" class="btn btn-primary"
+        type="submit">Dodaj
+</button>
+<p></p>
 </form>
+
+<script> (function() {
+    const form = document.querySelector('#add_form');
+    const checkboxes = form.querySelectorAll('input[type=checkbox]');
+    const checkboxLength = checkboxes.length;
+    const firstCheckbox = checkboxLength > 0 ? checkboxes[0] : null;
+
+    function init() {
+        if (firstCheckbox) {
+            for (let i = 0; i < checkboxLength; i++) {
+                checkboxes[i].addEventListener('change', checkValidity);
+            }
+
+            checkValidity();
+        }
+    }
+
+    function isChecked() {
+        for (let i = 0; i < checkboxLength; i++) {
+            if (checkboxes[i].checked) return true;
+        }
+
+        return false;
+    }
+
+    function checkValidity() {
+        const errorMessage = !isChecked() ? 'Odpad musi zawierać przynajmniej jeden izotop' : '';
+        firstCheckbox.setCustomValidity(errorMessage);
+    }
+
+    init();
+})();
+</script>
+
 {% endblock %}
-<script src="script.js"></script>
 </html>
