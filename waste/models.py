@@ -125,7 +125,7 @@ class Izotop(models.Model):
     izotop_id = models.SmallIntegerField(primary_key=True)
     nazwa = models.CharField(max_length=10)
     t_polokres = models.FloatField(db_column='T_polokres', verbose_name='Okres połowicznego rozpadu w dniach')
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
+    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa
@@ -202,7 +202,7 @@ class Odpad(models.Model):
     dodatkowe_informacje = models.CharField(max_length=255, blank=True, null=True)
     grupa_odpadow = models.ForeignKey('Slownik', models.DO_NOTHING, db_column='grupa_odpadow',
                                       related_name='grupa_odpadow')
-    skazenie_zewnetrzne = models.IntegerField(choices=[(1, 'Tak'), (0, 'Nie')])
+    skazenie_zewnetrzne = models.IntegerField(choices=[(1, 'Tak'), (0, 'Nie')], default=0)
     rodzaj_opakowania = models.ForeignKey('Slownik', models.DO_NOTHING, db_column='rodzaj_opakowania',
                                           related_name='rodzaj_opakowania')
     data_przekazania_do = models.DateTimeField()
@@ -219,8 +219,9 @@ class Odpad(models.Model):
                                       related_name='osoba_wydanie', verbose_name='Osoba wydająca')
     osoba_odbior = models.ForeignKey('Osoby', models.DO_NOTHING, db_column='osoba_odbior', blank=True, null=True,
                                      related_name='osoba_odbior', verbose_name='Osoba odbierająca')
-    odpad_zwrot = models.IntegerField(verbose_name='Odpad zwrócony do magazynu', choices=[(1, 'Tak'), (0, 'Nie')])
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
+    odpad_zwrot = models.IntegerField(verbose_name='Odpad zwrócony do magazynu', choices=[(1, 'Tak'), (0, 'Nie')],
+                                      default=0)
+    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nr_ewidencyjny
@@ -236,7 +237,7 @@ class Odpad(models.Model):
 class Osoby(models.Model):
     osoby_id = models.AutoField(primary_key=True)
     nazwa = models.CharField(max_length=30, verbose_name='Nazwisko')
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
+    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa
@@ -254,7 +255,7 @@ class Polka(models.Model):
     regal = models.CharField(max_length=4)
     polka = models.CharField(max_length=4)
     tag = models.CharField(max_length=8)
-    budynek = models.CharField(max_length=4)
+    budynek = models.CharField(max_length=4, choices=[('NB', 'Nowy budynek'), ('SB', 'Stary budynek')], default='NB')
     pokoj = models.CharField(max_length=6)
     opis = models.CharField(max_length=64)
 
@@ -279,8 +280,8 @@ class Pomiar(models.Model):
     odleglosc = models.FloatField(verbose_name='odległość [cm]')
     data = models.DateTimeField(verbose_name='data pomiaru')
     wykonal = models.ForeignKey('Osoby', models.DO_NOTHING, db_column='wykonal')
-    waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją', choices=[(1, 'Tak'),
-                                                                                                            (0, 'Nie')])
+    waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją',
+                                           choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     class Meta:
         managed = False
@@ -298,8 +299,8 @@ class Pomiartlo(models.Model):
     sprzet_id = models.ForeignKey('Sprzet', models.DO_NOTHING, db_column='sprzet_id',
                                   verbose_name='urządzenie pomiarowe')
     budynek = models.CharField(max_length=5, choices=[('SB', 'Stary budynek'), ('NB', 'Nowy budynek')])
-    waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją', choices=[(1, 'Tak'),
-                                                                                                            (0, 'Nie')])
+    waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją',
+                                           choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     class Meta:
         managed = False
@@ -311,7 +312,7 @@ class Pomiartlo(models.Model):
 
 class RoedigerPomiary(models.Model):
     pomiar_zbiornika_id = models.AutoField(primary_key=True)
-    nr_zbiornika = models.ForeignKey('RoedigerZbiorniki', models.DO_NOTHING, db_column='nr_zbiornika')
+    nr_zbiornika = models.ForeignKey('RoedigerZbiorniki', models.DO_NOTHING, db_column='nr_zbiornika', default=1)
     data_pomiaru = models.DateTimeField()
     wartosc = models.FloatField()
     jednostka = models.CharField(max_length=10)
@@ -327,9 +328,10 @@ class RoedigerPomiary(models.Model):
 
 class RoedigerZbiorniki(models.Model):
     zbiornik_id = models.SmallIntegerField(primary_key=True)
-    stan = models.CharField(max_length=1, choices=[('O', 'Otwarty'), ('Z', 'Zamknięty'), ('D', 'Dekontaminacja')])
+    stan = models.CharField(max_length=1, choices=[('O', 'Otwarty'), ('Z', 'Zamknięty'), ('D', 'Dekontaminacja')],
+                            default='O')
     zapelnienie = models.IntegerField()
-    active = models.IntegerField(verbose_name='w użyciu', choices=[(1, 'Tak'), (0, 'Nie')])
+    active = models.IntegerField(verbose_name='W użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return str(self.zbiornik_id)
@@ -356,9 +358,9 @@ class Slownik(models.Model):
     slownik_id = models.SmallIntegerField(primary_key=True)
     parent_id = models.SmallIntegerField(verbose_name='grupa', choices=[(1, 'nazwa pracowni'), (2, 'postać fizyczna'),
                                                                         (3, 'grupa odpadów'), (4, 'rodzaj opakowania'),
-                                                                        (5, 'miejsce powstania')])
+                                                                        (5, 'miejsce powstania')], default=1)
     nazwa = models.CharField(max_length=128)
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
+    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa
@@ -373,9 +375,9 @@ class Slownik(models.Model):
 
 class Sprzet(models.Model):
     sprzet_id = models.SmallIntegerField(primary_key=True)
-    nazwa = models.CharField(max_length=40)
+    nazwa = models.CharField(max_length=40, verbose_name='Numer seryjny')
     data_kalibracji_exp = models.DateField(verbose_name='data wygaśnięcia kalibracji')
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')])
+    active = models.IntegerField(verbose_name='W użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa
