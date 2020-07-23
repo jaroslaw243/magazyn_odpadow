@@ -283,6 +283,9 @@ class Pomiar(models.Model):
     waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją',
                                            choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
+    def __str__(self):
+        return f'Pomiar {self.data}'
+
     class Meta:
         managed = False
         verbose_name = 'Pomiar odpadu'
@@ -302,6 +305,9 @@ class Pomiartlo(models.Model):
     waznosc_kal_sprz = models.IntegerField(verbose_name='urządzenie pomiarowe z ważną kalibracją',
                                            choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
+    def __str__(self):
+        return f'Pomiar tła {self.data_pomiaru}'
+
     class Meta:
         managed = False
         verbose_name = 'Pomiar tła'
@@ -318,6 +324,9 @@ class RoedigerPomiary(models.Model):
     jednostka = models.CharField(max_length=10)
     wykonal = models.ForeignKey(Osoby, models.DO_NOTHING, db_column='wykonal')
 
+    def __str__(self):
+        return f'Pomiar zbiornika {self.data_pomiaru}'
+
     class Meta:
         managed = False
         ordering = ['nr_zbiornika', '-data_pomiaru']
@@ -331,7 +340,7 @@ class RoedigerZbiorniki(models.Model):
     stan = models.CharField(max_length=1, choices=[('O', 'Otwarty'), ('Z', 'Zamknięty'), ('D', 'Dekontaminacja')],
                             default='O')
     zapelnienie = models.IntegerField()
-    active = models.IntegerField(verbose_name='W użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
+    active = models.IntegerField(verbose_name='w użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return str(self.zbiornik_id)
@@ -377,7 +386,7 @@ class Sprzet(models.Model):
     sprzet_id = models.SmallIntegerField(primary_key=True)
     nazwa = models.CharField(max_length=40, verbose_name='Numer seryjny')
     data_kalibracji_exp = models.DateField(verbose_name='data wygaśnięcia kalibracji')
-    active = models.IntegerField(verbose_name='W użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
+    active = models.IntegerField(verbose_name='w użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa

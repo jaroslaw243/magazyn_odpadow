@@ -226,7 +226,7 @@ class RoedigerZbiornikiAdmin(admin.ModelAdmin):
     def active2bool_tank(self, obj):
         return bool(obj.active)
 
-    active2bool_tank.short_description = 'W użyciu'
+    active2bool_tank.short_description = 'w użyciu'
     active2bool_tank.boolean = True
 
     def has_delete_permission(self, request, obj=None):
@@ -236,7 +236,7 @@ class RoedigerZbiornikiAdmin(admin.ModelAdmin):
 class RoedigerPomiaryAdmin(admin.ModelAdmin):
     exclude = ['pomiar_zbiornika_id']
     date_hierarchy = 'data_pomiaru'
-    list_display = ['nr_zbiornika', 'data_pomiaru', 'wykonal']
+    list_display = ['data_pomiaru', 'nr_zbiornika', 'wykonal']
     list_filter = ['nr_zbiornika']
     search_fields = ['wykonal__nazwa']
 
