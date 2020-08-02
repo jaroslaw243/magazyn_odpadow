@@ -4,20 +4,26 @@ from .models import Pomiartlo, Pomiar, Lokalizacja, Liczniki, Sprzet, RoedigerPo
 from django.core.paginator import Paginator
 
 
-def nearest(items, pivot):
+def nearest_bg_mes_val(items, pivot):
+    items_len = len(items)
     pivot = pivot.data
-    items_dates = []
-    for i in items:
-        items_dates.append(i.data_pomiaru)
 
-    try:
-        nearest_date = min(items_dates, key=lambda x: abs(x - pivot))
-    except ValueError:
-        return []
+    if items_len > 1:
+        val_date_min = (items[0].wartosc, abs(items[0].data_pomiaru - pivot))
 
-    for j in items:
-        if j.data_pomiaru == nearest_date:
-            return j
+        for it in range(1, items_len):
+            val_date_cr = (items[it].wartosc, abs(items[it].data_pomiaru - pivot))
+
+            if val_date_cr[1] < val_date_min[1]:
+                val_date_min = val_date_cr
+
+        return val_date_min[0]
+
+    elif items_len == 1:
+        return items[0].wartosc
+
+    else:
+        return -1
 
 
 def measurement_value_check(waste_object):
@@ -33,12 +39,9 @@ def measurement_value_check(waste_object):
         data_pomiaru__gte=measurement.data - dateutil.relativedelta.relativedelta(days=7),
         data_pomiaru__lte=measurement.data + dateutil.relativedelta.relativedelta(days=7))
 
-    try:
-        if nearest(bg_measurements, measurement).wartosc >= measurement.wartosc:
-            return True
-        else:
-            return False
-    except AttributeError:
+    if nearest_bg_mes_val(bg_measurements, measurement) >= measurement.wartosc:
+        return True
+    else:
         return False
 
 
