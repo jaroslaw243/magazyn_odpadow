@@ -96,8 +96,11 @@ def view_db_monthly_report(request):
     removed_waste = Odpad.objects.filter(data_wydania__year=report_year)
     removed_waste = removed_waste.filter(data_wydania__month=report_month)
     removed_waste = removed_waste.filter(active=0).order_by('-data_wydania')
+    removed_waste_count = removed_waste.count()
 
-    return render(request, 'view_monthly_report.html', {'removed_waste': removed_waste, 'years': years})
+    return render(request, 'view_monthly_report.html', {'removed_waste': removed_waste, 'years': years,
+                                                        'report_year': report_year, 'report_month': report_month,
+                                                        'removed_waste_count': removed_waste_count})
 
 
 def view_by_date_search(request):

@@ -17,7 +17,7 @@
 </ul>
 {% endif %}
 
-<h1 style="text-align: center">Odpady wyrzucone w danym miesiącu</h1>
+<h1 style="text-align: center">Odpady wyrzucone {{report_month}}/{{report_year}}, w sumie {{removed_waste_count}}</h1>
 
 <form method="POST" action="view_monthly_report" name="monthly_report" id="monthly_report">
     {% csrf_token %}
