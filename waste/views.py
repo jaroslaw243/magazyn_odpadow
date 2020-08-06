@@ -10,7 +10,7 @@ import dateutil.relativedelta
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
-from .views_add_on import measurement_value_check, measurement_time_check, get_counter, check_calibration_validity, \
+from .views_add_on import radioactivity_check, half_life_check, get_counter, check_calibration_validity, \
     waste_db_time_period, bck_rad_time_period, view_tanks_time_period
 from reportlab.pdfgen import canvas
 import io
@@ -147,7 +147,7 @@ def remove_waste(request):
     waste_un_filtered = Odpad.objects.filter(active=1).order_by('data_przekazania_do')
     waste = []
     for u in waste_un_filtered:
-        if measurement_value_check(u) or measurement_time_check(u):
+        if radioactivity_check(u) or half_life_check(u):
             waste.append(u)
 
     gear_m = Sprzet.objects.filter(active=1)

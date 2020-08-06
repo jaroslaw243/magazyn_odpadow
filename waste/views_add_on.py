@@ -26,7 +26,7 @@ def nearest_bg_mes_val(items, pivot):
         return -1
 
 
-def measurement_value_check(waste_object):
+def radioactivity_check(waste_object):
     try:
         measurement = Pomiar.objects.filter(odpad_id=waste_object.odpad_id).order_by('-data')[0]
     except IndexError:
@@ -45,7 +45,7 @@ def measurement_value_check(waste_object):
         return False
 
 
-def measurement_time_check(waste_object2):
+def half_life_check(waste_object2):
     if waste_object2.data_usuniecia_10t <= datetime.datetime.now():
         return True
     else:
