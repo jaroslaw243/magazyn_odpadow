@@ -36,8 +36,8 @@ def radioactivity_check(waste_object):
 
     bg_measurements = Pomiartlo.objects.filter(budynek=loc_building)
     bg_measurements = bg_measurements.filter(
-        data_pomiaru__gte=measurement.data - dateutil.relativedelta.relativedelta(days=7),
-        data_pomiaru__lte=measurement.data + dateutil.relativedelta.relativedelta(days=7))
+        data_pomiaru__range=((measurement.data - dateutil.relativedelta.relativedelta(days=7)),
+                             (measurement.data + dateutil.relativedelta.relativedelta(days=7))))
 
     if nearest_bg_mes_val(bg_measurements, measurement) >= measurement.wartosc:
         return True
@@ -78,8 +78,7 @@ def check_calibration_validity(date, gear):
 
 def waste_db_time_period(request, delta):
     date_now = datetime.datetime.now()
-    location = Lokalizacja.objects.filter(data_umieszczenia__gte=date_now - delta,
-                                          data_umieszczenia__lte=date_now)
+    location = Lokalizacja.objects.filter(data_umieszczenia__gte=(date_now - delta))
     location = location.filter(biezacy=1).order_by('-data_umieszczenia')
     paginator = Paginator(location, 20)
     page_number = request.GET.get('page')
@@ -88,8 +87,7 @@ def waste_db_time_period(request, delta):
 
 def bck_rad_time_period(request, delta):
     date_now = datetime.datetime.now()
-    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=date_now - delta,
-                                      data_pomiaru__lte=date_now).order_by('-data_pomiaru')
+    mes_bg = Pomiartlo.objects.filter(data_pomiaru__gte=(date_now - delta)).order_by('-data_pomiaru')
     paginator = Paginator(mes_bg, 20)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)
@@ -97,8 +95,7 @@ def bck_rad_time_period(request, delta):
 
 def view_tanks_time_period(request, delta):
     date_now = datetime.datetime.now()
-    tanks = RoedigerPomiary.objects.filter(data_pomiaru__gte=date_now - delta,
-                                           data_pomiaru__lte=date_now).order_by('-data_pomiaru')
+    tanks = RoedigerPomiary.objects.filter(data_pomiaru__gte=(date_now - delta)).order_by('-data_pomiaru')
     paginator = Paginator(tanks, 20)
     page_number = request.GET.get('page')
     return paginator.get_page(page_number)

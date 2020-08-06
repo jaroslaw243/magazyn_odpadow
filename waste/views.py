@@ -42,6 +42,7 @@ def index(request):
     return render(request, 'index.html')
 
 
+@login_required
 def add_form(request):
     isotope = Izotop.objects.filter(active=1)
     lab_name = Slownik.objects.filter(parent_id=1, active=1)
@@ -50,6 +51,7 @@ def add_form(request):
     gear_to_use = Sprzet.objects.filter(active=1)
     rooms = Polka.objects.all().values('pokoj').distinct().order_by('-pokoj')
     rooms = rooms.exclude(pokoj='UT')
+
     return render(request, 'add_form.html', {'isotope': isotope, 'lab_name': lab_name, 'waste_group': waste_group,
                                              'gear': gear_to_use, 'p_of_origin': p_of_origin, 'rooms': rooms})
 
@@ -107,7 +109,7 @@ def view_by_date_search(request):
     date_from = request.POST.get('date_f')
     date_to = request.POST.get('date_t')
     try:
-        location = Lokalizacja.objects.filter(data_umieszczenia__gte=date_from, data_umieszczenia__lte=date_to)
+        location = Lokalizacja.objects.filter(data_umieszczenia__range=(date_from, date_to))
         location = location.filter(biezacy=1).order_by('-data_umieszczenia')
         paginator = Paginator(location, 20)
         page_number = request.GET.get('page')
@@ -143,6 +145,7 @@ def search_form(request):
     return render(request, 'search.html')
 
 
+@login_required
 def remove_waste(request):
     waste_un_filtered = Odpad.objects.filter(active=1).order_by('data_przekazania_do')
     waste = []
@@ -155,6 +158,7 @@ def remove_waste(request):
     return render(request, 'remove_waste.html', {'waste': waste, 'gear': gear_m})
 
 
+@login_required
 def remove_waste_submit(request):
     waste_id = request.POST.get('wasteSelect')
     try:
@@ -266,6 +270,7 @@ def calibrate(request):
     return render(request, 'calibrate_gear.html', {'gear_c': gear_c})
 
 
+@login_required
 def calibrate_submit(request):
     gear_select = request.POST.get('gearSelect')
     new_date_c = request.POST.get('date_c')
@@ -278,16 +283,21 @@ def calibrate_submit(request):
     return redirect('/waste/calibrate_gear')
 
 
+@login_required
 def add_new_mes_form(request):
     gear_m = Sprzet.objects.filter(active=1)
-    return render(request, 'add_new_waste_mes.html', {'gear': gear_m})
+    person = request.user.last_name
+
+    return render(request, 'add_new_waste_mes.html', {'gear': gear_m, 'person': person})
 
 
+@login_required
 def add_new_bg_mes_form(request):
     gear_m = Sprzet.objects.filter(active=1)
     return render(request, 'add_new_bg_mes.html', {'gear': gear_m})
 
 
+@login_required
 def add_mes_submit(request):
     try:
         waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num')).odpad_id
@@ -330,6 +340,7 @@ def add_mes_submit(request):
     return redirect('/waste/add_new_mes')
 
 
+@login_required
 def add_bg_mes_submit(request):
     dose = request.POST.get('dose')
     dose_unit = request.POST.get('dose_unit', 'uSv/h')
@@ -355,6 +366,7 @@ def add_bg_mes_submit(request):
     return redirect('/waste/add_new_bg_mes')
 
 
+@login_required
 def add_to_db_submit(request):
     place_origin = request.POST.get('place_origin')
     lab_name = request.POST.get('lab_name')
@@ -496,38 +508,27 @@ def print_choice(request):
 
 
 def print_waste_card(request):
-    # ref_num = request.POST.get('ref_num')
-    # waste_res = Odpad.objects.filter(nr_ewidencyjny=ref_num)[0]
-    # location_res = Lokalizacja.objects.filter(id_odpadu=waste_res.odpad_id)
-    # isotopes_res = Izotopy.objects.filter(id_odpadu=waste_res.odpad_id)
-    # measurements = Pomiar.objects.filter(odpad_id=waste_res.odpad_id).order_by('-data')
-
-    # Create a file-like buffer to receive PDF data.
     buffer = io.BytesIO()
 
-    # Create the PDF object, using the buffer as its "file."
     p = canvas.Canvas(buffer)
 
-    # Draw things on the PDF. Here's where the PDF generation happens.
-    # See the ReportLab documentation for the full list of functionality.
     p.drawString(150, 150, "Hello world.")
 
-    # Close the PDF object cleanly, and we're done.
     p.showPage()
     p.save()
 
-    # FileResponse sets the Content-Disposition header so that browsers
-    # present the option to save the file.
     buffer.seek(0)
     return FileResponse(buffer, as_attachment=True, filename='hello.pdf')
 
 
+@login_required
 def move_waste(request):
     rooms = Polka.objects.all().values('pokoj').distinct().order_by('-pokoj')
     rooms = rooms.exclude(pokoj='UT')
     return render(request, 'move_waste_form.html', {'rooms': rooms})
 
 
+@login_required
 def move_waste_submit(request):
     try:
         waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num')).odpad_id
@@ -582,6 +583,7 @@ def move_waste_submit(request):
     return redirect('/waste/move_waste')
 
 
+@login_required
 def return_waste(request):
     rooms = Polka.objects.all().values('pokoj').distinct().order_by('-pokoj')
     rooms = rooms.exclude(pokoj='UT')
@@ -589,6 +591,7 @@ def return_waste(request):
     return render(request, 'return_waste_form.html', {'rooms': rooms})
 
 
+@login_required
 def return_waste_submit(request):
     try:
         waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
@@ -646,10 +649,12 @@ def return_waste_submit(request):
     return redirect('/waste/return_waste')
 
 
+@login_required
 def comment(request):
     return render(request, 'comment_form.html')
 
 
+@login_required
 def comment_submit(request):
     try:
         waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
@@ -668,18 +673,21 @@ def comment_submit(request):
     return redirect('/waste/comment')
 
 
-def change_tank_state(request):
-    tanks = RoedigerZbiorniki.objects.filter(active=1)
-    number_of_tanks = tanks.count()
-    return render(request, 'change_tank_state.html', {'tanks': tanks, 'number_of_tanks': number_of_tanks})
-
-
+@login_required
 def change_tank_fill(request):
     tanks = RoedigerZbiorniki.objects.filter(active=1)
     number_of_tanks = tanks.count()
     return render(request, 'change_tank_fill.html', {'tanks': tanks, 'number_of_tanks': number_of_tanks})
 
 
+@login_required
+def change_tank_state(request):
+    tanks = RoedigerZbiorniki.objects.filter(active=1)
+    number_of_tanks = tanks.count()
+    return render(request, 'change_tank_state.html', {'tanks': tanks, 'number_of_tanks': number_of_tanks})
+
+
+@login_required
 def change_tank_fill_submit(request):
     tank_nr = request.POST.get('tank_nr')
     new_fill = request.POST.get('fill')
@@ -698,6 +706,7 @@ def change_tank_fill_submit(request):
     return redirect('/waste/change_tank_fill')
 
 
+@login_required
 def change_tank_state_submit(request):
     tank_nr = request.POST.get('tank_nr')
     new_state = request.POST.get('new_state')
@@ -716,11 +725,14 @@ def change_tank_state_submit(request):
     return redirect('/waste/change_tank_state')
 
 
+@login_required
 def tank_mes(request):
     tanks = RoedigerZbiorniki.objects.filter(active=1)
-    return render(request, 'tank_mes.html', {'tanks': tanks})
+    person = request.user.last_name
+    return render(request, 'tank_mes.html', {'tanks': tanks, 'person': person})
 
 
+@login_required
 def tank_mes_submit(request):
     tank_nr = request.POST.get('tank_nr')
     tank_mes_date = request.POST.get('tank_mes_date')
