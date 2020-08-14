@@ -158,7 +158,7 @@ def remove_waste(request):
     return render(request, 'remove_waste.html', {'waste': waste, 'gear': gear_m})
 
 
-@login_required
+@permission_required(('waste.change_odpad', 'waste.change_lokalizacja', 'waste.add_lokalizacja', 'waste.add_pomiar'))
 def remove_waste_submit(request):
     waste_id = request.POST.get('wasteSelect')
     try:
@@ -182,12 +182,12 @@ def remove_waste_submit(request):
 
     try:
         person_giving = Osoby.objects.filter(nazwa=person_giving_name)
-        person_giving = person_giving.filter(active=1)[0].osoby_id
+        person_giving = person_giving.filter(active=1)[0]
         person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
-        person_receiving = person_receiving.filter(active=1)[0].osoby_id
+        person_receiving = person_receiving.filter(active=1)[0]
 
         person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
-        person_making_mes = person_making_mes.filter(active=1)[0].osoby_id
+        person_making_mes = person_making_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
         return redirect('/waste/remove')
@@ -197,8 +197,8 @@ def remove_waste_submit(request):
 
     waste_to_be_removed.data_usuniecia_pomiar = mes_date + ' ' + mes_time
     waste_to_be_removed.data_wydania = remove_date + ' ' + remove_time
-    waste_to_be_removed.osoba_wydanie = Osoby(person_giving)
-    waste_to_be_removed.osoba_odbior = Osoby(person_receiving)
+    waste_to_be_removed.osoba_wydanie = person_giving
+    waste_to_be_removed.osoba_odbior = person_receiving
     waste_to_be_removed.active = 0
 
     waste_to_be_removed.save()
@@ -211,12 +211,12 @@ def remove_waste_submit(request):
     try:
         new_waste_location = Lokalizacja(id_odpadu=Odpad(waste_id), id_polki=Polka(9999),
                                          data_umieszczenia=(remove_date + ' ' + remove_time),
-                                         osoba=Osoby(person_giving), biezacy=1)
+                                         osoba=person_giving, biezacy=1)
         new_waste_location.save()
 
         remove_mes = Pomiar(odpad_id=Odpad(waste_id), sprzet_id_p=Sprzet(gear_select), wartosc=dose,
                             jednostka=dose_unit,
-                            odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=Osoby(person_making_mes),
+                            odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=person_making_mes,
                             waznosc_kal_sprz=check_calibration_validity(mes_date, gear_select))
         remove_mes.save()
 
@@ -270,7 +270,7 @@ def calibrate(request):
     return render(request, 'calibrate_gear.html', {'gear_c': gear_c})
 
 
-@login_required
+@permission_required('waste.change_sprzet')
 def calibrate_submit(request):
     gear_select = request.POST.get('gearSelect')
     new_date_c = request.POST.get('date_c')
@@ -297,10 +297,10 @@ def add_new_bg_mes_form(request):
     return render(request, 'add_new_bg_mes.html', {'gear': gear_m})
 
 
-@login_required
+@permission_required('waste.add_pomiar')
 def add_mes_submit(request):
     try:
-        waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num')).odpad_id
+        waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/add_new_mes')
@@ -315,7 +315,7 @@ def add_mes_submit(request):
 
     try:
         person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
-        person_making_mes = person_making_mes.filter(active=1)[0].osoby_id
+        person_making_mes = person_making_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
         return redirect('/waste/add_new_mes')
@@ -324,8 +324,8 @@ def add_mes_submit(request):
         return redirect('/waste/add_new_mes')
 
     try:
-        new_mes = Pomiar(odpad_id=Odpad(waste_id), sprzet_id_p=Sprzet(gear_select), wartosc=dose, jednostka=dose_unit,
-                         odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=Osoby(person_making_mes),
+        new_mes = Pomiar(odpad_id=waste_id, sprzet_id_p=Sprzet(gear_select), wartosc=dose, jednostka=dose_unit,
+                         odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=person_making_mes,
                          waznosc_kal_sprz=check_calibration_validity(mes_date, gear_select))
         new_mes.save()
     except ValidationError:
@@ -340,7 +340,7 @@ def add_mes_submit(request):
     return redirect('/waste/add_new_mes')
 
 
-@login_required
+@permission_required('waste.add_pomiartlo')
 def add_bg_mes_submit(request):
     dose = request.POST.get('dose')
     dose_unit = request.POST.get('dose_unit', 'uSv/h')
@@ -366,7 +366,7 @@ def add_bg_mes_submit(request):
     return redirect('/waste/add_new_bg_mes')
 
 
-@login_required
+@permission_required(('waste.add_odpad', 'waste.add_lokalizacja', 'waste.add_pomiar'))
 def add_to_db_submit(request):
     place_origin = request.POST.get('place_origin')
     lab_name = request.POST.get('lab_name')
@@ -401,9 +401,9 @@ def add_to_db_submit(request):
 
     try:
         person_giving = Osoby.objects.filter(nazwa=person_giving_name)
-        person_giving = person_giving.filter(active=1)[0].osoby_id
+        person_giving = person_giving.filter(active=1)[0]
         person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
-        person_receiving = person_receiving.filter(active=1)[0].osoby_id
+        person_receiving = person_receiving.filter(active=1)[0]
 
     except ObjectDoesNotExist:
         messages.info(request, 'Przekazanie na magazyn: Nie ma takiej osoby w bazie')
@@ -415,7 +415,7 @@ def add_to_db_submit(request):
     shelf_tags = Polka.objects.filter(budynek=building)
     try:
         shelf_tags = shelf_tags.filter(tag=shelf_tag_str)
-        shelf_tag = shelf_tags.get(pokoj=room_nr).polka_id
+        shelf_tag = shelf_tags.get(pokoj=room_nr)
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej kombinacji tagu półki, pokoju i budynku')
         return redirect('/waste/add')
@@ -461,7 +461,7 @@ def add_to_db_submit(request):
                           dodatkowe_informacje=additional_inf,
                           grupa_odpadow=Slownik(waste_group), skazenie_zewnetrzne=contamination,
                           rodzaj_opakowania=Slownik(container), data_przekazania_do=hand_on_datetime,
-                          osoba_przekazanie_do=Osoby(person_giving), osoba_przyjmujaca=Osoby(person_receiving),
+                          osoba_przekazanie_do=person_giving, osoba_przyjmujaca=person_receiving,
                           data_usuniecia_10t=date_10t, odpad_zwrot=returned, active=active)
         new_waste.save()
     except ValidationError:
@@ -474,23 +474,23 @@ def add_to_db_submit(request):
     messages.info(request, 'Dodano odpad')
 
     for izo in izotop:
-        new_waste_isotope = Izotopy(id_odpadu=Odpad(new_waste.odpad_id), id_izotop=Izotop(izo))
+        new_waste_isotope = Izotopy(id_odpadu=new_waste, id_izotop=Izotop(izo))
         new_waste_isotope.save()
 
-    new_waste_shelf = Lokalizacja(id_odpadu=Odpad(new_waste.odpad_id), id_polki=Polka(shelf_tag),
-                                  data_umieszczenia=hand_on_datetime, osoba=Osoby(person_receiving),
+    new_waste_shelf = Lokalizacja(id_odpadu=new_waste, id_polki=shelf_tag,
+                                  data_umieszczenia=hand_on_datetime, osoba=person_receiving,
                                   biezacy=current)
     new_waste_shelf.save()
 
     try:
         if dose != '':
             person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
-            person_making_mes = person_making_mes.filter(active=1)[0].osoby_id
+            person_making_mes = person_making_mes.filter(active=1)[0]
 
-            new_waste_mes = Pomiar(odpad_id=Odpad(new_waste.odpad_id), sprzet_id_p=Sprzet(gear_select),
+            new_waste_mes = Pomiar(odpad_id=new_waste, sprzet_id_p=Sprzet(gear_select),
                                    wartosc=dose, jednostka=dose_unit,
                                    odleglosc=mes_distance, data=(mes_date + ' ' + mes_time),
-                                   wykonal=Osoby(person_making_mes),
+                                   wykonal=person_making_mes,
                                    waznosc_kal_sprz=check_calibration_validity(mes_date, gear_select))
             new_waste_mes.save()
     except ValueError:
@@ -528,7 +528,7 @@ def move_waste(request):
     return render(request, 'move_waste_form.html', {'rooms': rooms})
 
 
-@login_required
+@permission_required(('waste.add_lokalizacja', 'waste.change_lokalizacja'))
 def move_waste_submit(request):
     try:
         waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num')).odpad_id
@@ -550,7 +550,7 @@ def move_waste_submit(request):
 
     try:
         person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
-        person_receiving = person_receiving.filter(active=1)[0].osoby_id
+        person_receiving = person_receiving.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
         return redirect('/waste/move_waste')
@@ -561,10 +561,10 @@ def move_waste_submit(request):
     shelf_tags = Polka.objects.filter(budynek=building)
     try:
         shelf_tags = shelf_tags.filter(tag=shelf_tag_str)
-        shelf_tag = shelf_tags.get(pokoj=room_nr).polka_id
+        shelf_tag = shelf_tags.get(pokoj=room_nr)
 
-        new_loc = Lokalizacja(id_odpadu=Odpad(waste_id), id_polki=Polka(shelf_tag),
-                              data_umieszczenia=(hand_on_date + ' ' + hand_on_time), osoba=Osoby(person_receiving),
+        new_loc = Lokalizacja(id_odpadu=Odpad(waste_id), id_polki=shelf_tag,
+                              data_umieszczenia=(hand_on_date + ' ' + hand_on_time), osoba=person_receiving,
                               biezacy=current)
         new_loc.save()
 
@@ -591,7 +591,7 @@ def return_waste(request):
     return render(request, 'return_waste_form.html', {'rooms': rooms})
 
 
-@login_required
+@permission_required(('waste.change_odpad', 'waste.change_lokalizacja', 'waste.add_lokalizacja'))
 def return_waste_submit(request):
     try:
         waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
@@ -617,7 +617,7 @@ def return_waste_submit(request):
 
     try:
         person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
-        person_receiving = person_receiving.filter(active=1)[0].osoby_id
+        person_receiving = person_receiving.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
         return redirect('/waste/return_waste')
@@ -628,10 +628,10 @@ def return_waste_submit(request):
     shelf_tags = Polka.objects.filter(budynek=building)
     try:
         shelf_tags = shelf_tags.filter(tag=shelf_tag_str)
-        shelf_tag = shelf_tags.get(pokoj=room_nr).polka_id
+        shelf_tag = shelf_tags.get(pokoj=room_nr)
 
-        new_loc = Lokalizacja(id_odpadu=Odpad(waste.odpad_id), id_polki=Polka(shelf_tag),
-                              data_umieszczenia=(hand_on_date + ' ' + hand_on_time), osoba=Osoby(person_receiving),
+        new_loc = Lokalizacja(id_odpadu=waste, id_polki=shelf_tag,
+                              data_umieszczenia=(hand_on_date + ' ' + hand_on_time), osoba=person_receiving,
                               biezacy=current)
         new_loc.save()
     except ObjectDoesNotExist:
@@ -654,7 +654,7 @@ def comment(request):
     return render(request, 'comment_form.html')
 
 
-@login_required
+@permission_required('waste.change_odpad')
 def comment_submit(request):
     try:
         waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
@@ -687,7 +687,7 @@ def change_tank_state(request):
     return render(request, 'change_tank_state.html', {'tanks': tanks, 'number_of_tanks': number_of_tanks})
 
 
-@login_required
+@permission_required('waste.change_roedigerzbiorniki')
 def change_tank_fill_submit(request):
     tank_nr = request.POST.get('tank_nr')
     new_fill = request.POST.get('fill')
@@ -706,7 +706,7 @@ def change_tank_fill_submit(request):
     return redirect('/waste/change_tank_fill')
 
 
-@login_required
+@permission_required('waste.change_roedigerzbiorniki')
 def change_tank_state_submit(request):
     tank_nr = request.POST.get('tank_nr')
     new_state = request.POST.get('new_state')
@@ -732,7 +732,7 @@ def tank_mes(request):
     return render(request, 'tank_mes.html', {'tanks': tanks, 'person': person})
 
 
-@login_required
+@permission_required('waste.add_roedigerpomiary')
 def tank_mes_submit(request):
     tank_nr = request.POST.get('tank_nr')
     tank_mes_date = request.POST.get('tank_mes_date')
@@ -742,14 +742,8 @@ def tank_mes_submit(request):
     person_making_tank_mes_name = request.POST.get('person_making_tank_mes')
 
     try:
-        tank = RoedigerZbiorniki.objects.get(zbiornik_id=tank_nr).zbiornik_id
-    except ObjectDoesNotExist:
-        messages.info(request, 'Należy wybrać zbiornik')
-        return redirect('/waste/tank_mes')
-
-    try:
         person_making_tank_mes = Osoby.objects.filter(nazwa=person_making_tank_mes_name)
-        person_making_tank_mes = person_making_tank_mes.filter(active=1)[0].osoby_id
+        person_making_tank_mes = person_making_tank_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
         return redirect('/waste/tank_mes')
@@ -758,8 +752,9 @@ def tank_mes_submit(request):
         return redirect('/waste/tank_mes')
 
     try:
-        new_tank_mes = RoedigerPomiary(nr_zbiornika=tank, data_pomiaru=tank_mes_date + ' ' + tank_mes_time,
-                                       wartosc=tank_mes_value, jednostka=tank_mes_unit, wykonal=person_making_tank_mes)
+        new_tank_mes = RoedigerPomiary(nr_zbiornika=RoedigerZbiorniki(tank_nr),
+                                       data_pomiaru=tank_mes_date + ' ' + tank_mes_time, wartosc=tank_mes_value,
+                                       jednostka=tank_mes_unit, wykonal=person_making_tank_mes)
 
         new_tank_mes.save()
     except ValidationError:

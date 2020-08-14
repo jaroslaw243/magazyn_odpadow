@@ -22,8 +22,8 @@
     <h1 style="text-align: center">Dodawanie pomiaru zbiornika</h1>
     <div class="form-row" style="display: block; margin:0 auto; max-width: 900px;">
         <div class="col-md-3 mb-3" style="display: block; margin:0 auto; max-width: 386px">
-            <label for="place_origin">Wybierz zbiornik</label>
-            <select class="form-control" id="place_origin" name="place_origin">
+            <label for="tank_nr">Wybierz zbiornik</label>
+            <select class="form-control" id="tank_nr" name="tank_nr">
                 {% for t in tanks %}
                 <option value='{{t.zbiornik_id}}'>{{t.zbiornik_id}}</option>
                 {% endfor %}

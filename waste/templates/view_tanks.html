@@ -17,7 +17,6 @@
         <thead>
         <tr>
             <th scope="col">Numer zbiornika</th>
-            <th scope="col">Stan zbiornika</th>
             <th scope="col">Data pomiaru</th>
             <th scope="col">Wartość</th>
             <th scope="col">Wykonał</th>
@@ -27,7 +26,6 @@
         {% for t in tanks %}
         <tr>
             <td>{{t.nr_zbiornika.zbiornik_id}}</td>
-            <td>{{t.nr_zbiornika.stan}}</td>
             <td>{{t.data_pomiaru}}</td>
             <td>{{t.wartosc}} {{t.jednostka}}</td>
             <td>{{t.wykonal.nazwa}}</td>
