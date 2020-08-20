@@ -18,7 +18,7 @@
         <tbody>
         {% for l in location %}
         <tr>
-            <td>{{l.id_odpadu.nr_ewidencyjny}}</td>
+            <td><a style="color:white" href="/waste/search_by_name?ref_num={{l.id_odpadu.nr_ewidencyjny}}">{{l.id_odpadu.nr_ewidencyjny}}</a></td>
             <td> {{l.id_polki.budynek}} | p. {{l.id_polki.pokoj}} | {{l.id_polki.opis}}</td>
             <td>{{l.id_odpadu.data_przekazania_do}}</td>
             <td>{{l.id_odpadu.grupa_odpadow.nazwa}}</td>
