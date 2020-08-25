@@ -385,7 +385,7 @@ def add_to_db_submit(request):
     active = request.POST.get('active', 1)
     izotop = request.POST.getlist('isotopeSelect')
     current = request.POST.get('current', 1)
-    shelf_tag_str = request.POST.get('shelf')
+    shelf_tag_str = request.POST.get('shelf').upper()
     building = request.POST.get('building')
     room_nr = request.POST.get('room')
     returned = request.POST.get('returned', 0)
@@ -541,7 +541,7 @@ def move_waste_submit(request):
         return redirect('/waste/move_waste')
 
     current = request.POST.get('current', 1)
-    shelf_tag_str = request.POST.get('shelf')
+    shelf_tag_str = request.POST.get('shelf').upper()
     building = request.POST.get('building')
     room_nr = request.POST.get('room')
     hand_on_date = request.POST.get('hand_on_date')

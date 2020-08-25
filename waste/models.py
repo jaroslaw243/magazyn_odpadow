@@ -339,7 +339,7 @@ class RoedigerZbiorniki(models.Model):
     zbiornik_id = models.SmallIntegerField(primary_key=True)
     stan = models.CharField(max_length=1, choices=[('O', 'Otwarty'), ('Z', 'Zamknięty'), ('D', 'Dekontaminacja')],
                             default='O')
-    zapelnienie = models.IntegerField()
+    zapelnienie = models.IntegerField(default=0)
     active = models.IntegerField(verbose_name='w użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):

@@ -5,6 +5,7 @@ RUN groupadd -r technician && useradd --no-log-init -r -g technician technician
 WORKDIR /usr/src/code
 COPY . .
 RUN pip install -r requirements.txt
+RUN apt-get update && apt-get install -y nano
 
 RUN chown -R technician:technician /usr/src/code
 USER technician
