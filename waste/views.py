@@ -124,7 +124,7 @@ def view_by_date_search(request):
 def view_by_name_search(request):
     ref_num = request.GET.get('ref_num')
     try:
-        waste_res = Odpad.objects.filter(nr_ewidencyjny=ref_num)[0]
+        waste_res = Odpad.objects.filter(nr_ewidencyjny__iexact=ref_num)[0]
 
         location_res = Lokalizacja.objects.filter(id_odpadu=waste_res.odpad_id)
         location_res = location_res.get(biezacy=1)
@@ -181,12 +181,12 @@ def remove_waste_submit(request):
     mes_time = request.POST.get('mes_time')
 
     try:
-        person_giving = Osoby.objects.filter(nazwa=person_giving_name)
+        person_giving = Osoby.objects.filter(nazwa__iexact=person_giving_name)
         person_giving = person_giving.filter(active=1)[0]
-        person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
+        person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
         person_receiving = person_receiving.filter(active=1)[0]
 
-        person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
+        person_making_mes = Osoby.objects.filter(nazwa__iexact=person_making_mes_name)
         person_making_mes = person_making_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
@@ -300,7 +300,7 @@ def add_new_bg_mes_form(request):
 @permission_required('waste.add_pomiar')
 def add_mes_submit(request):
     try:
-        waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
+        waste_id = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/add_new_mes')
@@ -314,7 +314,7 @@ def add_mes_submit(request):
     person_making_mes_name = request.POST.get('person_making_mes')
 
     try:
-        person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
+        person_making_mes = Osoby.objects.filter(nazwa__iexact=person_making_mes_name)
         person_making_mes = person_making_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
@@ -400,9 +400,9 @@ def add_to_db_submit(request):
     person_making_mes_name = request.POST.get('person_making_mes')
 
     try:
-        person_giving = Osoby.objects.filter(nazwa=person_giving_name)
+        person_giving = Osoby.objects.filter(nazwa__iexact=person_giving_name)
         person_giving = person_giving.filter(active=1)[0]
-        person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
+        person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
         person_receiving = person_receiving.filter(active=1)[0]
 
     except ObjectDoesNotExist:
@@ -484,7 +484,7 @@ def add_to_db_submit(request):
 
     try:
         if dose != '':
-            person_making_mes = Osoby.objects.filter(nazwa=person_making_mes_name)
+            person_making_mes = Osoby.objects.filter(nazwa__iexact=person_making_mes_name)
             person_making_mes = person_making_mes.filter(active=1)[0]
 
             new_waste_mes = Pomiar(odpad_id=new_waste, sprzet_id_p=Sprzet(gear_select),
@@ -531,7 +531,7 @@ def move_waste(request):
 @permission_required(('waste.add_lokalizacja', 'waste.change_lokalizacja'))
 def move_waste_submit(request):
     try:
-        waste_id = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num')).odpad_id
+        waste_id = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num')).odpad_id
         old_loc = Lokalizacja.objects.filter(id_odpadu=waste_id)
         old_loc = old_loc.get(biezacy=1)
         old_loc.biezacy = 0
@@ -549,7 +549,7 @@ def move_waste_submit(request):
     person_receiving_name = request.POST.get('person_receiving')
 
     try:
-        person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
+        person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
         person_receiving = person_receiving.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
@@ -594,7 +594,7 @@ def return_waste(request):
 @permission_required(('waste.change_odpad', 'waste.change_lokalizacja', 'waste.add_lokalizacja'))
 def return_waste_submit(request):
     try:
-        waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
+        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
         waste.odpad_zwrot = 1
         waste.active = 1
         waste.save()
@@ -608,7 +608,7 @@ def return_waste_submit(request):
         return redirect('/waste/return_waste')
 
     current = request.POST.get('current', 1)
-    shelf_tag_str = request.POST.get('shelf')
+    shelf_tag_str = request.POST.get('shelf').upper()
     building = request.POST.get('building')
     room_nr = request.POST.get('room')
     hand_on_date = request.POST.get('hand_on_date')
@@ -657,7 +657,7 @@ def comment(request):
 @permission_required('waste.change_odpad')
 def comment_submit(request):
     try:
-        waste = Odpad.objects.get(nr_ewidencyjny=request.POST.get('ref_num'))
+        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/comment')
@@ -742,7 +742,7 @@ def tank_mes_submit(request):
     person_making_tank_mes_name = request.POST.get('person_making_tank_mes')
 
     try:
-        person_making_tank_mes = Osoby.objects.filter(nazwa=person_making_tank_mes_name)
+        person_making_tank_mes = Osoby.objects.filter(nazwa__iexact=person_making_tank_mes_name)
         person_making_tank_mes = person_making_tank_mes.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
