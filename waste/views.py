@@ -616,7 +616,7 @@ def return_waste_submit(request):
     person_receiving_name = request.POST.get('person_receiving')
 
     try:
-        person_receiving = Osoby.objects.filter(nazwa=person_receiving_name)
+        person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
         person_receiving = person_receiving.filter(active=1)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiej osoby w bazie')
