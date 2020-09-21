@@ -124,7 +124,10 @@ def view_by_date_search(request):
 def view_by_name_search(request):
     ref_num = request.GET.get('ref_num')
     try:
-        waste_res = Odpad.objects.filter(nr_ewidencyjny__iexact=ref_num)[0]
+        if ref_num.isnumeric():
+            waste_res = Odpad.objects.get(odpad_id=int(ref_num))
+        else:
+            waste_res = Odpad.objects.filter(nr_ewidencyjny__iexact=ref_num)[0]
 
         location_res = Lokalizacja.objects.filter(id_odpadu=waste_res.odpad_id)
         location_res = location_res.get(biezacy=1)
