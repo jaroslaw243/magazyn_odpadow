@@ -129,16 +129,21 @@ def view_by_name_search(request):
         else:
             waste_res = Odpad.objects.filter(nr_ewidencyjny__iexact=ref_num)[0]
 
-        location_res = Lokalizacja.objects.filter(id_odpadu=waste_res.odpad_id)
-        location_res = location_res.get(biezacy=1)
-        isotopes_res = Izotopy.objects.filter(id_odpadu=waste_res.odpad_id)
-        measurements = Pomiar.objects.filter(odpad_id=waste_res.odpad_id).order_by('-data')
     except IndexError:
         messages.info(request, 'Nie ma takiego numeru ewidencyjnego w bazie')
         return redirect('/waste/view_search')
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego numeru ewidencyjnego w bazie')
         return redirect('/waste/view_search')
+
+    location_res = Lokalizacja.objects.filter(id_odpadu=waste_res.odpad_id)
+    if location_res.filter(biezacy=1).count() == 1:
+        location_res = location_res.get(biezacy=1)
+    else:
+        location_res = location_res.order_by('-data_umieszczenia').first()
+
+    isotopes_res = Izotopy.objects.filter(id_odpadu=waste_res.odpad_id)
+    measurements = Pomiar.objects.filter(odpad_id=waste_res.odpad_id).order_by('-data')
 
     return render(request, 'view_db_search_by_name.html', {'waste': waste_res, 'location': location_res,
                                                            'isotopes': isotopes_res, 'measurements': measurements})
