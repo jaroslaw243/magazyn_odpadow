@@ -190,7 +190,7 @@ class OsobyAdmin(admin.ModelAdmin):
         return False
 
     def get_queryset(self, request):
-        return Osoby.objects.exclude(osoby_id=0)
+        return Osoby.objects.exclude(osoby_id__in=(31, 73))
 
 
 class PomiartloAdmin(admin.ModelAdmin):
