@@ -539,11 +539,7 @@ def move_waste(request):
 @permission_required(('waste.add_lokalizacja', 'waste.change_lokalizacja'))
 def move_waste_submit(request):
     try:
-        waste_id = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num')).odpad_id
-        old_loc = Lokalizacja.objects.filter(id_odpadu=waste_id)
-        old_loc = old_loc.get(biezacy=1)
-        old_loc.biezacy = 0
-        old_loc.save()
+        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/move_waste')
@@ -555,6 +551,16 @@ def move_waste_submit(request):
     hand_on_date = request.POST.get('hand_on_date')
     hand_on_time = request.POST.get('hand_on_time')
     person_receiving_name = request.POST.get('person_receiving')
+
+    old_loc = Lokalizacja.objects.filter(id_odpadu=waste)
+    if old_loc.filter(biezacy=1).count() == 1:
+        old_loc = old_loc.get(biezacy=1)
+    else:
+        messages.info(request, 'Brak jednej bieżącej lokalizacji')
+        return redirect('/waste/move_waste')
+
+    old_loc.biezacy = 0
+    old_loc.save()
 
     try:
         person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
@@ -571,7 +577,7 @@ def move_waste_submit(request):
         shelf_tags = shelf_tags.filter(tag=shelf_tag_str)
         shelf_tag = shelf_tags.get(pokoj=room_nr)
 
-        new_loc = Lokalizacja(id_odpadu=Odpad(waste_id), id_polki=shelf_tag,
+        new_loc = Lokalizacja(id_odpadu=waste, id_polki=shelf_tag,
                               data_umieszczenia=(hand_on_date + ' ' + hand_on_time), osoba=person_receiving,
                               biezacy=current)
         new_loc.save()
@@ -603,14 +609,7 @@ def return_waste(request):
 def return_waste_submit(request):
     try:
         waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
-        waste.odpad_zwrot = 1
-        waste.active = 1
-        waste.save()
 
-        old_loc = Lokalizacja.objects.filter(id_odpadu=waste.odpad_id)
-        old_loc = old_loc.get(biezacy=1)
-        old_loc.biezacy = 0
-        old_loc.save()
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/return_waste')
@@ -622,6 +621,20 @@ def return_waste_submit(request):
     hand_on_date = request.POST.get('hand_on_date')
     hand_on_time = request.POST.get('hand_on_time')
     person_receiving_name = request.POST.get('person_receiving')
+
+    waste.odpad_zwrot = 1
+    waste.active = 1
+    waste.save()
+
+    old_loc = Lokalizacja.objects.filter(id_odpadu=waste)
+    if old_loc.filter(biezacy=1).count() == 1:
+        old_loc = old_loc.get(biezacy=1)
+    else:
+        messages.info(request, 'Brak jednej bieżącej lokalizacji')
+        return redirect('/waste/move_waste')
+
+    old_loc.biezacy = 0
+    old_loc.save()
 
     try:
         person_receiving = Osoby.objects.filter(nazwa__iexact=person_receiving_name)
