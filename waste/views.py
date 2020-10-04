@@ -427,12 +427,8 @@ def add_to_db_submit(request):
         messages.info(request, 'Nie ma takiej kombinacji tagu półki, pokoju i budynku')
         return redirect('/waste/add')
 
-    decay_times = []
-    for d in izotop:
-        decay_times.append(Izotop.objects.get(izotop_id=d).t_polokres)
-
     try:
-        isotope_decay = max(decay_times)
+        isotope_decay = max(Izotop.objects.filter(izotop_id__in=izotop).values_list('t_polokres', flat=True))
     except ValueError:
         messages.info(request, 'Odpad musi zawierać przynajmniej jeden izotop')
         return redirect('/waste/add')
