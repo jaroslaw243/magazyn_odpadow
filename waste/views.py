@@ -168,9 +168,8 @@ def remove_waste(request):
 
 @permission_required(('waste.change_odpad', 'waste.change_lokalizacja', 'waste.add_lokalizacja', 'waste.add_pomiar'))
 def remove_waste_submit(request):
-    waste_id = request.POST.get('wasteSelect')
     try:
-        waste_to_be_removed = Odpad.objects.get(odpad_id=waste_id)
+        waste_to_be_removed = Odpad.objects.get(odpad_id=request.POST.get('wasteSelect'))
     except ObjectDoesNotExist:
         messages.info(request, 'Należy wybrać odpad')
         return redirect('/waste/remove')
@@ -211,18 +210,18 @@ def remove_waste_submit(request):
 
     waste_to_be_removed.save()
 
-    old_waste_location = Lokalizacja.objects.filter(id_odpadu=waste_id)
+    old_waste_location = Lokalizacja.objects.filter(id_odpadu=waste_to_be_removed)
     old_waste_location = old_waste_location.get(biezacy=1)
     old_waste_location.biezacy = 0
     old_waste_location.save()
 
     try:
-        new_waste_location = Lokalizacja(id_odpadu=Odpad(waste_id), id_polki=Polka(9999),
+        new_waste_location = Lokalizacja(id_odpadu=waste_to_be_removed, id_polki=Polka(9999),
                                          data_umieszczenia=(remove_date + ' ' + remove_time),
                                          osoba=person_giving, biezacy=1)
         new_waste_location.save()
 
-        remove_mes = Pomiar(odpad_id=Odpad(waste_id), sprzet_id_p=Sprzet(gear_select), wartosc=dose,
+        remove_mes = Pomiar(odpad_id=waste_to_be_removed, sprzet_id_p=Sprzet(gear_select), wartosc=dose,
                             jednostka=dose_unit,
                             odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=person_making_mes,
                             waznosc_kal_sprz=check_calibration_validity(mes_date, gear_select))
