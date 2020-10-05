@@ -28,10 +28,10 @@ def nearest_bg_mes_val(items, pivot):
 
 def radioactivity_check(waste_object):
     try:
-        measurement = Pomiar.objects.filter(odpad_id=waste_object.odpad_id).order_by('-data')[0]
+        measurement = Pomiar.objects.filter(odpad_id=waste_object).order_by('-data')[0]
     except IndexError:
         return False
-    loc = Lokalizacja.objects.filter(id_odpadu=waste_object.odpad_id).order_by('-data_umieszczenia')[0]
+    loc = Lokalizacja.objects.filter(id_odpadu=waste_object).order_by('-data_umieszczenia')[0]
     loc_building = loc.id_polki.budynek
 
     bg_measurements = Pomiartlo.objects.filter(budynek=loc_building)
