@@ -2,6 +2,7 @@ import dateutil
 import datetime
 from .models import Pomiartlo, Pomiar, Lokalizacja, Liczniki, Sprzet, RoedigerPomiary
 from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
 
 
 def nearest_bg_mes_val(items, pivot):
@@ -28,10 +29,10 @@ def nearest_bg_mes_val(items, pivot):
 
 def radioactivity_check(waste_object):
     try:
-        measurement = Pomiar.objects.filter(odpad_id=waste_object).order_by('-data')[0]
-    except IndexError:
+        measurement = Pomiar.objects.filter(odpad_id=waste_object).latest('data')
+    except ObjectDoesNotExist:
         return False
-    loc = Lokalizacja.objects.filter(id_odpadu=waste_object).order_by('-data_umieszczenia')[0]
+    loc = Lokalizacja.objects.filter(id_odpadu=waste_object).latest('data_umieszczenia')
     loc_building = loc.id_polki.budynek
 
     bg_measurements = Pomiartlo.objects.filter(budynek=loc_building)

@@ -390,7 +390,7 @@ def add_to_db_submit(request):
     hand_on_date = request.POST.get('hand_on_date')
     hand_on_time = request.POST.get('hand_on_time')
     active = request.POST.get('active', 1)
-    izotop = request.POST.getlist('isotopeSelect')
+    isotopes = request.POST.getlist('isotopeSelect')
     current = request.POST.get('current', 1)
     shelf_tag_str = request.POST.get('shelf').upper()
     building = request.POST.get('building')
@@ -428,7 +428,7 @@ def add_to_db_submit(request):
         return redirect('/waste/add')
 
     try:
-        isotope_decay = max(Izotop.objects.filter(izotop_id__in=izotop).values_list('t_polokres', flat=True))
+        isotope_decay = max(Izotop.objects.filter(izotop_id__in=isotopes).values_list('t_polokres', flat=True))
     except ValueError:
         messages.info(request, 'Odpad musi zawierać przynajmniej jeden izotop')
         return redirect('/waste/add')
@@ -444,8 +444,8 @@ def add_to_db_submit(request):
 
     date_10t = hand_on_datetime + datetime.timedelta(days=isotope_decay * 10)
 
-    if len(izotop) == 1:
-        isotope_name = Izotop.objects.get(izotop_id=izotop[0]).nazwa
+    if len(isotopes) == 1:
+        isotope_name = Izotop.objects.get(izotop_id=isotopes[0]).nazwa
     else:
         isotope_name = 'mieszane'
 
@@ -476,8 +476,8 @@ def add_to_db_submit(request):
 
     messages.info(request, 'Dodano odpad')
 
-    for izo in izotop:
-        new_waste_isotope = Izotopy(id_odpadu=new_waste, id_izotop=Izotop(izo))
+    for iso in isotopes:
+        new_waste_isotope = Izotopy(id_odpadu=new_waste, id_izotop=Izotop(iso))
         new_waste_isotope.save()
 
     new_waste_shelf = Lokalizacja(id_odpadu=new_waste, id_polki=shelf_tag,
