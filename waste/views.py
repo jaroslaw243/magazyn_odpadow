@@ -125,10 +125,9 @@ def view_by_name_search(request):
     ref_num = request.GET.get('ref_num')
     try:
         if ref_num.isnumeric():
-            waste_res = Odpad.objects.get(odpad_id=int(ref_num))
+            waste_res = Odpad.objects.get(odpad_id=ref_num)
         else:
             waste_res = Odpad.objects.filter(nr_ewidencyjny__iexact=ref_num)[0]
-
     except IndexError:
         messages.info(request, 'Nie ma takiego numeru ewidencyjnego w bazie')
         return redirect('/waste/view_search')
@@ -306,9 +305,16 @@ def add_new_bg_mes_form(request):
 
 @permission_required('waste.add_pomiar')
 def add_mes_submit(request):
+    waste_id = request.POST.get('ref_num')
     try:
-        waste_id = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
+        if waste_id.isnumeric():
+            waste = Odpad.objects.get(odpad_id=waste_id)
+        else:
+            waste = Odpad.objects.filter(nr_ewidencyjny__iexact=waste_id)[0]
     except ObjectDoesNotExist:
+        messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
+        return redirect('/waste/add_new_mes')
+    except IndexError:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/add_new_mes')
 
@@ -331,7 +337,7 @@ def add_mes_submit(request):
         return redirect('/waste/add_new_mes')
 
     try:
-        new_mes = Pomiar(odpad_id=waste_id, sprzet_id_p=Sprzet(gear_select), wartosc=dose, jednostka=dose_unit,
+        new_mes = Pomiar(odpad_id=waste, sprzet_id_p=Sprzet(gear_select), wartosc=dose, jednostka=dose_unit,
                          odleglosc=mes_distance, data=(mes_date + ' ' + mes_time), wykonal=person_making_mes,
                          waznosc_kal_sprz=check_calibration_validity(mes_date, gear_select))
         new_mes.save()
@@ -533,9 +539,16 @@ def move_waste(request):
 
 @permission_required(('waste.add_lokalizacja', 'waste.change_lokalizacja'))
 def move_waste_submit(request):
+    waste_id = request.POST.get('ref_num')
     try:
-        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
+        if waste_id.isnumeric():
+            waste = Odpad.objects.get(odpad_id=waste_id)
+        else:
+            waste = Odpad.objects.filter(nr_ewidencyjny__iexact=waste_id)[0]
     except ObjectDoesNotExist:
+        messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
+        return redirect('/waste/move_waste')
+    except IndexError:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/move_waste')
 
@@ -602,10 +615,16 @@ def return_waste(request):
 
 @permission_required(('waste.change_odpad', 'waste.change_lokalizacja', 'waste.add_lokalizacja'))
 def return_waste_submit(request):
+    waste_id = request.POST.get('ref_num')
     try:
-        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
-
+        if waste_id.isnumeric():
+            waste = Odpad.objects.get(odpad_id=waste_id)
+        else:
+            waste = Odpad.objects.filter(nr_ewidencyjny__iexact=waste_id)[0]
     except ObjectDoesNotExist:
+        messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
+        return redirect('/waste/return_waste')
+    except IndexError:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/return_waste')
 
@@ -672,8 +691,12 @@ def comment(request):
 
 @permission_required('waste.change_odpad')
 def comment_submit(request):
+    waste_id = request.POST.get('ref_num')
     try:
-        waste = Odpad.objects.get(nr_ewidencyjny__iexact=request.POST.get('ref_num'))
+        if waste_id.isnumeric():
+            waste = Odpad.objects.get(odpad_id=waste_id)
+        else:
+            waste = Odpad.objects.filter(nr_ewidencyjny__iexact=waste_id)[0]
     except ObjectDoesNotExist:
         messages.info(request, 'Nie ma takiego nr ewidencyjnego w bazie')
         return redirect('/waste/comment')
