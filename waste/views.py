@@ -10,6 +10,7 @@ import dateutil.relativedelta
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.paginator import Paginator
+from django.utils.safestring import mark_safe
 from .views_add_on import radioactivity_check, half_life_check, get_counter, check_calibration_validity, \
     waste_db_time_period, bck_rad_time_period, view_tanks_time_period
 from reportlab.pdfgen import canvas
@@ -480,7 +481,7 @@ def add_to_db_submit(request):
         messages.info(request, 'Nieprawidłowy format daty')
         return redirect('/waste/add')
 
-    messages.info(request, 'Dodano odpad')
+    messages.info(request, mark_safe(f'Dodano <a href=/waste/search_by_name?ref_num={ref_num}>odpad</a>'))
 
     for iso in isotopes:
         new_waste_isotope = Izotopy(id_odpadu=new_waste, id_izotop=Izotop(iso))
