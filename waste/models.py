@@ -1,10 +1,3 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
 
@@ -125,7 +118,7 @@ class Izotop(models.Model):
     izotop_id = models.SmallIntegerField(primary_key=True)
     nazwa = models.CharField(max_length=10)
     t_polokres = models.FloatField(db_column='T_polokres', verbose_name='Okres połowicznego rozpadu w dniach')
-    active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
+    active = models.PositiveIntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
         return self.nazwa
@@ -339,7 +332,7 @@ class RoedigerZbiorniki(models.Model):
     zbiornik_id = models.SmallIntegerField(primary_key=True)
     stan = models.CharField(max_length=1, choices=[('O', 'Otwarty'), ('Z', 'Zamknięty'), ('D', 'Dekontaminacja')],
                             default='O')
-    zapelnienie = models.IntegerField(default=0)
+    zapelnienie = models.PositiveIntegerField(default=0)
     active = models.IntegerField(verbose_name='w użyciu', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
     def __str__(self):
@@ -365,9 +358,11 @@ class Settings(models.Model):
 
 class Slownik(models.Model):
     slownik_id = models.SmallIntegerField(primary_key=True)
-    parent_id = models.SmallIntegerField(verbose_name='grupa', choices=[(1, 'nazwa pracowni'), (2, 'postać fizyczna'),
-                                                                        (3, 'grupa odpadów'), (4, 'rodzaj opakowania'),
-                                                                        (5, 'miejsce powstania')], default=1)
+    parent_id = models.PositiveSmallIntegerField(verbose_name='grupa', choices=[(1, 'nazwa pracowni'),
+                                                                                (2, 'postać fizyczna'),
+                                                                                (3, 'grupa odpadów'),
+                                                                                (4, 'rodzaj opakowania'),
+                                                                                (5, 'miejsce powstania')], default=1)
     nazwa = models.CharField(max_length=128)
     active = models.IntegerField(verbose_name='aktywny', choices=[(1, 'Tak'), (0, 'Nie')], default=1)
 
