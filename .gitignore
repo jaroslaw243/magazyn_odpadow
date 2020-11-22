@@ -4,6 +4,7 @@ nginx
 .env.dev
 .env.prod
 docker-compose.prod.yml
+docker-compose.prod2.yml
 waste_storage/settings.py
 waste_storage/settings_prod.py
 waste_storage/settings_dev.py
