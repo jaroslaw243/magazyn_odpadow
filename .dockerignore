@@ -6,8 +6,10 @@ README.md
 mysql-dump
 nginx
 .env.dev
+.env.prod
 docker-compose.yml
 docker-compose.prod.yml
+docker-compose.prod_ext_db.yml
 waste_storage/settings_prod.py
 waste_storage/settings_dev.py
 venv
