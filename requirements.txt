@@ -1,4 +1,4 @@
-Django==3.2.14
+Django==3.2.18
 reportlab
 Pillow
 mysqlclient
